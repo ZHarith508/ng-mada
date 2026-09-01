@@ -1,0 +1,41 @@
+{
+  "name": "NG-MADA - Gestion des Apports",
+  "short_name": "NG-MADA",
+  "description": "Gestion des apports, caisse et membres de votre association",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#facc15",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://drive.google.com/thumbnail?id=1tNXUPl0gC6aAeaJ5C4evF4zMaZJNOBgb&sz=w192",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://drive.google.com/thumbnail?id=1tNXUPl0gC6aAeaJ5C4evF4zMaZJNOBgb&sz=w512",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "/?tab=dashboard",
+      "icons": [{ "src": "https://drive.google.com/thumbnail?id=1tNXUPl0gC6aAeaJ5C4evF4zMaZJNOBgb&sz=w192", "sizes": "192x192" }]
+    },
+    {
+      "name": "Membres",
+      "url": "/?tab=membres",
+      "icons": [{ "src": "https://drive.google.com/thumbnail?id=1tNXUPl0gC6aAeaJ5C4evF4zMaZJNOBgb&sz=w192", "sizes": "192x192" }]
+    },
+    {
+      "name": "Caisse",
+      "url": "/?tab=caisse",
+      "icons": [{ "src": "https://drive.google.com/thumbnail?id=1tNXUPl0gC6aAeaJ5C4evF4zMaZJNOBgb&sz=w192", "sizes": "192x192" }]
+    }
+  ]
+}

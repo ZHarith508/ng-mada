@@ -1,0 +1,16 @@
+{
+  "appId": "com.ngmada.app",
+  "appName": "NG-MADA",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "allowNavigation": [
+      "*"
+    ]
+  },
+  "android": {
+    "allowMixedContent": true,
+    "useLegacyBridge": true
+  }
+}
