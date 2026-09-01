@@ -4,16 +4,8 @@
 <base target="_top">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<!-- ===== PWA META TAGS ===== -->
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1tNXUPl0gC6aAeaJ5C4evF4zMaZJNOBgb&sz=w192">
-<meta name="theme-color" content="#0f172a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-
-  
 /* ============================================================
    STYLESHEET COMPLET - NG-MADA (THÈME SOMBRE)
    ============================================================ */
@@ -2289,139 +2281,103 @@ body.dark-mode .btn-save:hover {
 </div>
 
 <script>
-
-  // Enregistrer le Service Worker
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(reg => {
-                console.log('✅ Service Worker enregistré');
-                
-                // Vérifier les mises à jour
-                reg.addEventListener('updatefound', () => {
-                    const newWorker = reg.installing;
-                    newWorker.addEventListener('statechange', () => {
-                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            showUpdateNotification();
-                        }
-                    });
-                });
-            })
-            .catch(err => console.log('❌ Erreur SW:', err));
-    });
-}
-
-// Notification de mise à jour
-function showUpdateNotification() {
-    const div = document.createElement('div');
-    div.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        right: 20px;
-        background: #1a2332;
-        color: #facc15;
-        padding: 16px;
-        border-radius: 12px;
-        text-align: center;
-        z-index: 9999;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        border: 1px solid #facc15;
-        font-family: 'Segoe UI', Arial, sans-serif;
-    `;
-    div.innerHTML = `
-        <strong>🔄 Nouvelle version disponible</strong>
-        <br>
-        <button onclick="updateApp()" style="
-            margin-top: 10px;
-            padding: 8px 24px;
-            background: #facc15;
-            color: #0f172a;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        ">Mettre à jour</button>
-        <button onclick="this.parentElement.remove()" style="
-            margin-top: 10px;
-            margin-left: 10px;
-            padding: 8px 16px;
-            background: transparent;
-            color: #94a3b8;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            cursor: pointer;
-        ">Plus tard</button>
-    `;
-    document.body.appendChild(div);
-}
-
-function updateApp() {
-    navigator.serviceWorker.ready.then(reg => {
-        reg.waiting.postMessage('skipWaiting');
-        window.location.reload();
-    });
-}
-
-// Bouton d'installation
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    showInstallButton();
-});
-
-function showInstallButton() {
-    const existing = document.getElementById('pwaInstallBtn');
-    if (existing) existing.remove();
-    
-    const btn = document.createElement('div');
-    btn.id = 'pwaInstallBtn';
-    btn.style.cssText = `
-        position: fixed;
-        bottom: 90px;
-        right: 20px;
-        z-index: 1000;
-    `;
-    btn.innerHTML = `
-        <button onclick="installPWA()" style="
-            background: linear-gradient(135deg, #facc15, #f59e0b);
-            color: #0f172a;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 20px;
-            font-weight: bold;
-            box-shadow: 0 4px 20px rgba(250,204,21,0.3);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-        ">
-            📱 Installer l'application
-        </button>
-    `;
-    document.body.appendChild(btn);
-}
-
-function installPWA() {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((result) => {
-            if (result.outcome === 'accepted') {
-                console.log('✅ Application installée');
-                document.getElementById('pwaInstallBtn')?.remove();
-            }
-            deferredPrompt = null;
-        });
-    }
-}
 // ============================================================
 //  SCRIPT NG-MADA - VERSION FINALE UNIFIÉE (CORRIGÉE)
 //  AVEC SYNCHRONISATION COMPLÈTE
 // ============================================================
 
 console.log('🚀 Script NG-MADA chargé');
+
+// ============================================================
+//  PONT POUR APK/PWA - CONNEXION À GOOGLE APPS SCRIPT
+// ============================================================
+
+// 🔴 REMPLACEZ PAR VOTRE URL GAS 🔴
+const GAS_CONFIG = {
+    url: 'https://script.google.com/u/0/home/projects/144mDSE6rjcMxwKE66-85jQgB2GKI-inu9sqZf-gRs6ZsJER89jeNES4m/edit'
+};
+
+// Détection du mode (PWA, APK ou navigateur)
+function isPWAorAPK() {
+    return navigator.userAgent.indexOf('NG-MADA-APP') !== -1 ||
+           window.location.protocol === 'file:' ||
+           navigator.userAgent.indexOf('wv') !== -1 ||
+           window.matchMedia('(display-mode: standalone)').matches ||
+           navigator.standalone === true;
+}
+
+// Fonction qui remplace google.script.run
+function createGasProxy() {
+    const handler = {
+        get(target, prop) {
+            if (prop === 'withSuccessHandler') {
+                return function(callback) {
+                    target._success = callback;
+                    return target;
+                };
+            }
+            if (prop === 'withFailureHandler') {
+                return function(callback) {
+                    target._failure = callback;
+                    return target;
+                };
+            }
+            if (typeof prop === 'string' && !prop.startsWith('_')) {
+                return function(data) {
+                    // Appel vers Apps Script via fetch
+                    fetch(GAS_CONFIG.url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            method: prop, 
+                            data: data || {}
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(result => {
+                        if (target._success) target._success(result);
+                    })
+                    .catch(err => {
+                        if (target._failure) target._failure(err);
+                    });
+                };
+            }
+            return target[prop];
+        }
+    };
+    return new Proxy({}, handler);
+}
+
+// Initialiser le pont
+function initGasBridge() {
+    console.log('🌐 Mode:', isPWAorAPK() ? 'PWA/APK' : 'Navigateur');
+    
+    if (isPWAorAPK()) {
+        console.log('📱 Mode PWA/APK - Pont Google Apps Script activé');
+        
+        // Créer google.script.run si inexistant
+        if (typeof google === 'undefined') {
+            window.google = { script: {} };
+        }
+        if (typeof google.script === 'undefined') {
+            google.script = {};
+        }
+        
+        google.script.run = createGasProxy();
+        
+        // Tester la connexion
+        setTimeout(() => {
+            console.log('🔗 Pont GAS prêt - URL:', GAS_CONFIG.url);
+        }, 500);
+    } else {
+        console.log('🌐 Mode navigateur - Utilisation de google.script.run natif');
+    }
+}
+
+// Appeler au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    initGasBridge();
+});
 
 // ===== VARIABLES GLOBALES =====
 var STOCKAGE_TOKEN = 'ngmada_session_token';
