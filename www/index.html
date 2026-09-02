@@ -2348,6 +2348,64 @@ function createGasProxy() {
     return new Proxy({}, handler);
 }
 
+// ============================================================
+//  FONCTIONS DE TEST
+// ============================================================
+
+/**
+ * Teste la connexion avec Google Apps Script
+ * À utiliser dans la console (F12) pour vérifier la connexion
+ */
+function testConnection() {
+    console.log('🔍 Test de connexion vers GAS...');
+    console.log('📍 URL:', GAS_CONFIG.url);
+    
+    // Vérifier si google.script.run existe
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+        console.log('✅ google.script.run disponible');
+        
+        // Appeler la méthode testerConnexion
+        google.script.run
+            .withSuccessHandler(function(result) {
+                console.log('✅ SUCCÈS:', result);
+                alert('✅ Connexion GAS OK !\n' + JSON.stringify(result, null, 2));
+            })
+            .withFailureHandler(function(err) {
+                console.error('❌ ÉCHEC:', err);
+                alert('❌ Erreur de connexion:\n' + (err.message || err));
+            })
+            .testerConnexion({ test: 'Hello from PWA!' });
+    } else {
+        console.error('❌ google.script.run NON DISPONIBLE');
+        alert('❌ google.script.run non disponible');
+    }
+}
+
+/**
+ * Teste la connexion directe via fetch (pour APK/PWA)
+ */
+function testFetch() {
+    console.log('🔍 Test fetch vers GAS...');
+    console.log('📍 URL:', GAS_CONFIG.url);
+    
+    fetch(GAS_CONFIG.url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            method: 'testerConnexion',
+            data: { test: 'Hello from fetch!' }
+        })
+    })
+    .then(res => res.json())
+    .then(result => {
+        console.log('✅ SUCCÈS (fetch):', result);
+        alert('✅ Connexion fetch OK !\n' + JSON.stringify(result, null, 2));
+    })
+    .catch(err => {
+        console.error('❌ ÉCHEC (fetch):', err);
+        alert('❌ Erreur fetch:\n' + (err.message || err));
+    });
+}
 // Initialiser le pont
 function initGasBridge() {
     console.log('🌐 Mode:', isPWAorAPK() ? 'PWA/APK' : 'Navigateur');
