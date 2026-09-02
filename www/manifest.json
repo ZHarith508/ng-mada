@@ -20,22 +20,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "shortcuts": [
-    {
-      "name": "Dashboard",
-      "url": "/?tab=dashboard",
-      "icons": [{ "src": "https://drive.google.com/thumbnail?id=1tNXUPl0gC6aAeaJ5C4evF4zMaZJNOBgb&sz=w192", "sizes": "192x192" }]
-    },
-    {
-      "name": "Membres",
-      "url": "/?tab=membres",
-      "icons": [{ "src": "https://drive.google.com/thumbnail?id=1tNXUPl0gC6aAeaJ5C4evF4zMaZJNOBgb&sz=w192", "sizes": "192x192" }]
-    },
-    {
-      "name": "Caisse",
-      "url": "/?tab=caisse",
-      "icons": [{ "src": "https://drive.google.com/thumbnail?id=1tNXUPl0gC6aAeaJ5C4evF4zMaZJNOBgb&sz=w192", "sizes": "192x192" }]
-    }
   ]
 }
