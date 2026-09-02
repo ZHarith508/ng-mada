@@ -2411,6 +2411,289 @@ function testFetch() {
         alert('❌ Erreur fetch:\n' + (err.message || err));
     });
 }
+// ============================================================
+//  MODE DÉMO - DONNÉES SIMULÉES (POUR GITHUB PAGES)
+// ============================================================
+
+function activateDemoMode() {
+    console.log('🔧 Activation du mode démo...');
+    
+    // Créer google.script.run avec des données simulées
+    if (typeof google === 'undefined') {
+        window.google = { script: {} };
+    }
+    if (typeof google.script === 'undefined') {
+        google.script = {};
+    }
+    
+    // Données simulées
+    const demoData = {
+        // Dashboard
+        getDashboardData: function(data, callback) {
+            setTimeout(function() {
+                callback({
+                    totalVerse: 1805000,
+                    totalReste: 4195000,
+                    associesValides: 5,
+                    enAttente: 3,
+                    joursRestants: 33,
+                    soldeCaisse: -9157000
+                });
+            }, 300);
+        },
+        
+        // Membres
+        getMembres: function(data, callback) {
+            setTimeout(function() {
+                callback([
+                    { id: 'M0001', nom: 'Rakoto Jean', telephone: '032 12 345 67', statut: 'Associé validé', email: 'rakoto@test.com', photo: '' },
+                    { id: 'M0002', nom: 'Rakotomalala Mirana', telephone: '033 98 765 43', statut: 'Nouveau - à vérifier', email: 'mirana@test.com', photo: '' },
+                    { id: 'M0003', nom: 'Hery Tiana', telephone: '034 56 789 01', statut: 'Associé validé', email: 'hery@test.com', photo: '' }
+                ]);
+            }, 300);
+        },
+        
+        // Apports
+        getApportsData: function(data, callback) {
+            setTimeout(function() {
+                callback([
+                    { idMembre: 'M0001', nom: 'Rakoto Jean', apportPrevu: 1000000, montantVerse: 500000, resteAVerser: 500000, pourcentage: 0.5, statut: 'Partiellement versé', factures: ['NG-2026-00001'] },
+                    { idMembre: 'M0002', nom: 'Rakotomalala Mirana', apportPrevu: 1000000, montantVerse: 0, resteAVerser: 1000000, pourcentage: 0, statut: 'Nouveau - à vérifier', factures: [] },
+                    { idMembre: 'M0003', nom: 'Hery Tiana', apportPrevu: 1000000, montantVerse: 800000, resteAVerser: 200000, pourcentage: 0.8, statut: 'Partiellement versé', factures: ['NG-2026-00002'] }
+                ]);
+            }, 300);
+        },
+        
+        // Factures
+        getFacturesData: function(data, callback) {
+            setTimeout(function() {
+                callback([
+                    { row: 2, numFacture: '', nom: 'ANTOINNE', montant: 20000, modePaiement: 'Airtel Money', datePaiement: '12/08/2026', validation: '' },
+                    { row: 3, numFacture: 'NG-2026-00001', nom: 'Rakoto Jean', montant: 500000, modePaiement: 'MVola', datePaiement: '10/08/2026', validation: 'VALIDER' }
+                ]);
+            }, 300);
+        },
+        
+        // Finance (Caisse)
+        getFinanceData: function(data, callback) {
+            setTimeout(function() {
+                callback({
+                    items: [
+                        { row: 1, date: '10/08/2026', type: 'Entrée', categorie: 'Apport associé', description: 'Apport Rakoto Jean', entree: 500000, sortie: 0, numFacture: 'NG-2026-00001', enregistrePar: 'Admin' }
+                    ],
+                    totalEntree: 500000,
+                    totalSortie: 0
+                });
+            }, 300);
+        },
+        
+        // Apports mensuels (graphique)
+        getApportsMensuels: function(data, callback) {
+            setTimeout(function() {
+                callback({
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû'],
+                    data: [50000, 75000, 30000, 40000, 60000, 80000, 45000, 65000]
+                });
+            }, 300);
+        },
+        
+        // Profil utilisateur
+        getProfilUtilisateur: function(email, callback) {
+            setTimeout(function() {
+                callback({
+                    success: true,
+                    nom: 'Admin NG-MADA',
+                    email: email || 'admin@ngmada.com',
+                    photo: '',
+                    dateCreation: '01/09/2026'
+                });
+            }, 300);
+        },
+        
+        // Liste utilisateurs
+        getListeUtilisateurs: function(data, callback) {
+            setTimeout(function() {
+                callback([
+                    { nom: 'Admin NG-MADA', email: 'admin@ngmada.com', estEnLigne: true },
+                    { nom: 'Utilisateur Test', email: 'test@ngmada.com', estEnLigne: false }
+                ]);
+            }, 300);
+        },
+        
+        // Connexion
+        connecterUtilisateur: function(data, callback) {
+            setTimeout(function() {
+                if (data.email && data.motDePasse) {
+                    callback({ success: true, token: 'demo_token_' + Date.now(), nom: 'Utilisateur Démo', email: data.email });
+                } else {
+                    callback({ success: false, message: 'Email ou mot de passe incorrect' });
+                }
+            }, 300);
+        },
+        
+        // Inscription
+        inscrireUtilisateur: function(data, callback) {
+            setTimeout(function() {
+                callback({ success: true });
+            }, 300);
+        },
+        
+        // Vérification PIN
+        verifierPin: function(pin, callback) {
+            setTimeout(function() {
+                callback(pin === '1986' || pin === '0000');
+            }, 300);
+        },
+        
+        // Sauvegarde membre
+        saveMembre: function(data, callback) {
+            setTimeout(function() {
+                callback({ success: true, id: 'M' + String(Math.floor(Math.random() * 9999)).padStart(4, '0') });
+            }, 300);
+        },
+        
+        // Validation facture
+        validerFactureWeb: function(pin, row, numFacture, callback) {
+            setTimeout(function() {
+                callback({ success: true, numFacture: numFacture || 'NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') });
+            }, 300);
+        },
+        
+        // Suppression membre en cascade
+        supprimerMembreAvecCascade: function(pin, id, callback) {
+            setTimeout(function() {
+                callback({ success: true, message: 'Membre supprimé avec succès' });
+            }, 300);
+        },
+        
+        // Suppression facture en cascade
+        supprimerFactureAvecCascade: function(pin, row, callback) {
+            setTimeout(function() {
+                callback({ success: true, message: 'Facture supprimée avec succès' });
+            }, 300);
+        },
+        
+        // Ajout mouvement finance
+        ajouterMouvementFinance: function(pin, infos, callback) {
+            setTimeout(function() {
+                callback({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') });
+            }, 300);
+        },
+        
+        // Prévisualisation mouvement finance
+        previsualiserMouvementFinance: function(pin, infos, callback) {
+            setTimeout(function() {
+                callback({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') });
+            }, 300);
+        },
+        
+        // Envoi carte membre
+        envoyerCarteMembreParEmail: function(pin, id, callback) {
+            setTimeout(function() {
+                callback({ success: true, email: 'membre@test.com' });
+            }, 300);
+        },
+        
+        // Envoi justificatif
+        envoyerJustificatifParEmail: function(pin, row, callback) {
+            setTimeout(function() {
+                callback({ success: true, email: 'admin@test.com' });
+            }, 300);
+        },
+        
+        // Génération numéro facture
+        genererNumeroFacture: function(callback) {
+            setTimeout(function() {
+                callback('NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0'));
+            }, 300);
+        },
+        
+        // Test connexion
+        testerConnexion: function(data, callback) {
+            setTimeout(function() {
+                callback({ success: true, message: '✅ Mode démo actif !' });
+            }, 300);
+        },
+        
+        // Déconnexion
+        deconnecterUtilisateur: function(token, callback) {
+            setTimeout(function() {
+                callback({ success: true });
+            }, 300);
+        },
+        
+        // Mettre à jour date connexion
+        mettreAJourDateConnexion: function(email, callback) {
+            setTimeout(function() {
+                callback({ success: true });
+            }, 300);
+        }
+    };
+    
+    // Créer le proxy
+    google.script.run = {
+        _success: null,
+        _failure: null,
+        
+        withSuccessHandler: function(callback) {
+            this._success = callback;
+            return this;
+        },
+        withFailureHandler: function(callback) {
+            this._failure = callback;
+            return this;
+        }
+    };
+    
+    // Proxy pour capturer les appels
+    const handler = {
+        get(target, prop) {
+            if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
+                return target[prop].bind(target);
+            }
+            if (typeof prop === 'string' && !prop.startsWith('_')) {
+                return function(data) {
+                    if (demoData[prop]) {
+                        demoData[prop](data, function(result) {
+                            if (target._success) target._success(result);
+                        });
+                    } else {
+                        if (target._failure) target._failure(new Error('Méthode inconnue: ' + prop));
+                    }
+                    return target;
+                };
+            }
+            return target[prop];
+        }
+    };
+    
+    google.script.run = new Proxy(google.script.run, handler);
+    
+    console.log('✅ Mode démo activé avec données simulées !');
+    console.log('📊 L\'application fonctionne maintenant localement.');
+    
+    // Recharger l'interface
+    loadedTabs = {};
+    
+    setTimeout(function() {
+        loadDashboard();
+        console.log('🔄 Interface rechargée avec données de démonstration');
+    }, 500);
+}
+
+// Appeler le mode démo après l'initialisation
+function startWithDemoMode() {
+    console.log('🚀 Démarrage en mode démo...');
+    activateDemoMode();
+}
+
+// Remplacer initGasBridge pour forcer le mode démo
+// (Garder la fonction pour compatibilité mais rediriger vers demo)
+var originalInitGasBridge = initGasBridge;
+initGasBridge = function() {
+    console.log('🌐 Mode démo activé (GitHub Pages)');
+    startWithDemoMode();
+};
 
 // ============================================================
 //  INITIALISATION DU PONT
