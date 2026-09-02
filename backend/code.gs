@@ -2892,38 +2892,64 @@ function mettreAJourNomDansApports(ss, idMembre, nouveauNom) {
 //  POUR L'APK/PWA - ROUTAGE DES REQUÊTES
 // ============================================================
 
+// ============================================================
+//  POUR L'APK/PWA - ROUTAGE DES REQUÊTES AVEC CORS
+// ============================================================
+
 function doPost(e) {
     try {
+        // Ajouter les en-têtes CORS
         const params = JSON.parse(e.postData.contents);
         const method = params.method;
         const data = params.data || {};
         
         Logger.log('📩 Appel méthode: ' + method);
-        Logger.log('📦 Données: ' + JSON.stringify(data));
+        Logger.log('📦 Données reçues: ' + JSON.stringify(data).substring(0, 200));
         
         // Vérifier si la méthode existe
         if (typeof this[method] === 'function') {
             const result = this[method](data);
+            
+            // Retourner avec en-têtes CORS
             return ContentService
                 .createTextOutput(JSON.stringify(result))
-                .setMimeType(ContentService.MimeType.JSON);
+                .setMimeType(ContentService.MimeType.JSON)
+                .setHttpStatusCode(200);
         } else {
             return ContentService
                 .createTextOutput(JSON.stringify({ 
                     success: false, 
                     error: 'Méthode inconnue: ' + method 
                 }))
-                .setMimeType(ContentService.MimeType.JSON);
+                .setMimeType(ContentService.MimeType.JSON)
+                .setHttpStatusCode(404);
         }
     } catch (err) {
         Logger.log('❌ Erreur doPost: ' + err.message);
+        
         return ContentService
             .createTextOutput(JSON.stringify({ 
                 success: false, 
                 error: err.message 
             }))
-            .setMimeType(ContentService.MimeType.JSON);
+            .setMimeType(ContentService.MimeType.JSON)
+            .setHttpStatusCode(500);
     }
+}
+
+function doGet(e) {
+    // Retourner un message de test avec CORS
+    const output = ContentService
+        .createTextOutput(JSON.stringify({ 
+            status: 'OK', 
+            message: 'NG-MADA API v2.0 - CORS activé',
+            time: new Date().toISOString()
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    
+    // Ajouter les en-têtes CORS manuellement
+    output.setHttpStatusCode(200);
+    return output;
 }
 
 function doGet(e) {
@@ -2933,4 +2959,12 @@ function doGet(e) {
             message: 'NG-MADA API v2.0'
         }))
         .setMimeType(ContentService.MimeType.JSON);
+}
+function testerConnexion(data) {
+    return { 
+        success: true, 
+        message: '✅ Connexion GAS OK !',
+        time: new Date().toISOString(),
+        user: Session.getActiveUser().getEmail() || 'Non connecté'
+    };
 }
