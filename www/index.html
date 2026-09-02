@@ -2282,8 +2282,8 @@ body.dark-mode .btn-save:hover {
 
 <script>
 // ============================================================
-//  SCRIPT NG-MADA - VERSION FINALE CORRIGÉE
-//  AVEC SYNCHRONISATION COMPLÈTE
+//  SCRIPT NG-MADA - VERSION FINALE COMPLÈTE
+//  AVEC SYNCHRONISATION COMPLÈTE ET PROXY CORRIGÉ
 // ============================================================
 
 console.log('🚀 Script NG-MADA chargé');
@@ -2306,96 +2306,86 @@ function isPWAorAPK() {
            navigator.standalone === true;
 }
 
-// Fonction qui remplace google.script.run - VERSION CORRIGÉE
+// ============================================================
+//  PROXY POUR google.script.run - VERSION CORRIGÉE
+// ============================================================
+
 function createGasProxy() {
-    // Créer un objet qui stocke les callbacks
-    const proxyObj = {};
+    const context = { _success: null, _failure: null };
     
-    const handler = {
+    function executeMethod(method, data) {
+        console.log('📤 Appel méthode:', method);
+        fetch(GAS_CONFIG.url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ method: method, data: data || {} })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+        })
+        .then(result => {
+            if (context._success) context._success(result);
+        })
+        .catch(err => {
+            if (context._failure) context._failure(err);
+            else console.error('❌ Erreur non gérée:', err);
+        });
+    }
+    
+    const proxy = {
+        withSuccessHandler: function(callback) {
+            context._success = callback;
+            return proxy;
+        },
+        withFailureHandler: function(callback) {
+            context._failure = callback;
+            return proxy;
+        }
+    };
+    
+    return new Proxy(proxy, {
         get(target, prop) {
-            if (prop === 'withSuccessHandler') {
-                return function(callback) {
-                    target._success = callback;
-                    return target;  // ← Retourne target pour le chaînage
-                };
+            if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
+                return target[prop];
             }
-            if (prop === 'withFailureHandler') {
-                return function(callback) {
-                    target._failure = callback;
-                    return target;  // ← Retourne target pour le chaînage
-                };
-            }
-            if (typeof prop === 'string' && !prop.startsWith('_')) {
+            if (typeof prop === 'string') {
                 return function(data) {
-                    // Appel vers Apps Script via fetch
-                    fetch(GAS_CONFIG.url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            method: prop, 
-                            data: data || {}
-                        })
-                    })
-                    .then(res => {
-                        if (!res.ok) {
-                            throw new Error('HTTP ' + res.status);
-                        }
-                        return res.json();
-                    })
-                    .then(result => {
-                        if (target._success) target._success(result);
-                    })
-                    .catch(err => {
-                        if (target._failure) target._failure(err);
-                        else console.error('❌ Erreur non gérée:', err);
-                    });
+                    executeMethod(prop, data);
+                    return target;
                 };
             }
             return target[prop];
         }
-    };
-    
-    return new Proxy(proxyObj, handler);
+    });
 }
 
 // ============================================================
-//  FONCTIONS DE TEST - VERSION CORRIGÉE
+//  FONCTIONS DE TEST
 // ============================================================
 
-/**
- * Teste la connexion avec Google Apps Script
- */
 function testConnection() {
     console.log('🔍 Test de connexion vers GAS...');
     console.log('📍 URL:', GAS_CONFIG.url);
     
     if (typeof google !== 'undefined' && google.script && google.script.run) {
         console.log('✅ google.script.run disponible');
-        
-        try {
-            google.script.run
-                .withSuccessHandler(function(result) {
-                    console.log('✅ SUCCÈS:', result);
-                    alert('✅ Connexion GAS OK !\n' + JSON.stringify(result, null, 2));
-                })
-                .withFailureHandler(function(err) {
-                    console.error('❌ ÉCHEC:', err);
-                    alert('❌ Erreur de connexion:\n' + (err.message || err));
-                })
-                .testerConnexion({ test: 'Hello from PWA!' });
-        } catch (e) {
-            console.error('❌ Erreur appel:', e);
-            alert('❌ Erreur: ' + e.message);
-        }
+        google.script.run
+            .withSuccessHandler(function(result) {
+                console.log('✅ SUCCÈS:', result);
+                alert('✅ Connexion GAS OK !\n' + JSON.stringify(result, null, 2));
+            })
+            .withFailureHandler(function(err) {
+                console.error('❌ ÉCHEC:', err);
+                alert('❌ Erreur de connexion:\n' + (err.message || err));
+            })
+            .testerConnexion({ test: 'Hello from PWA!' });
     } else {
         console.error('❌ google.script.run NON DISPONIBLE');
         alert('❌ google.script.run non disponible');
     }
 }
 
-/**
- * Teste la connexion directe via fetch (pour APK/PWA)
- */
 function testFetch() {
     console.log('🔍 Test fetch vers GAS...');
     console.log('📍 URL:', GAS_CONFIG.url);
@@ -2409,9 +2399,7 @@ function testFetch() {
         })
     })
     .then(res => {
-        if (!res.ok) {
-            throw new Error('HTTP ' + res.status);
-        }
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         return res.json();
     })
     .then(result => {
@@ -2425,79 +2413,32 @@ function testFetch() {
 }
 
 // ============================================================
-//  INITIALISATION DU PONT - VERSION CORRIGÉE
+//  INITIALISATION DU PONT
 // ============================================================
 
 function initGasBridge() {
-    const hasNativeGAS = typeof google !== 'undefined' && 
-                         google.script && 
-                         google.script.run &&
-                         typeof google.script.run.withSuccessHandler === 'function';
+    console.log('🌐 Initialisation du pont GAS...');
     
-    const useProxy = !hasNativeGAS || isPWAorAPK();
-    
-    console.log('🌐 Mode:', useProxy ? 'PROXY (PWA/APK)' : 'GAS natif');
-    console.log('📌 hasNativeGAS:', hasNativeGAS);
-    
-    if (useProxy) {
-        console.log('📱 Pont Google Apps Script activé via fetch');
-        
-        if (typeof google === 'undefined') {
-            window.google = { script: {} };
-        }
-        if (typeof google.script === 'undefined') {
-            google.script = {};
-        }
-        
-        google.script.run = createGasProxy();
-        
-        setTimeout(() => {
-            console.log('🔗 Pont GAS prêt - URL:', GAS_CONFIG.url);
-        }, 500);
-    } else {
-        console.log('🌐 Mode navigateur - Utilisation de google.script.run natif');
+    if (typeof google === 'undefined') {
+        window.google = { script: {} };
     }
-}
-
-// ============================================================
-//  TEST AUTOMATIQUE - VERSION CORRIGÉE
-// ============================================================
-
-function autoTest() {
-    console.log('🔄 Test automatique de connexion...');
-    
-    if (typeof google !== 'undefined' && google.script && google.script.run) {
-        console.log('✅ google.script.run disponible');
-        
-        try {
-            google.script.run
-                .withSuccessHandler(function(result) {
-                    console.log('✅ Connexion GAS réussie:', result);
-                })
-                .withFailureHandler(function(err) {
-                    console.log('❌ Connexion GAS échouée:', err);
-                    console.log('💡 Utilisez testFetch() pour tester directement');
-                })
-                .testerConnexion({ test: 'auto' });
-        } catch (e) {
-            console.log('❌ Erreur autoTest:', e.message);
-            console.log('💡 Utilisez testFetch() pour tester directement');
-        }
-    } else {
-        console.log('❌ google.script.run NON DISPONIBLE');
-        console.log('💡 Utilisez testFetch() pour tester directement');
+    if (typeof google.script === 'undefined') {
+        google.script = {};
     }
+    
+    google.script.run = createGasProxy();
+    
+    console.log('🔗 Pont GAS prêt - URL:', GAS_CONFIG.url);
+    
+    setTimeout(function() {
+        console.log('🔄 Test automatique...');
+        testConnection();
+    }, 1500);
 }
-
-// ============================================================
-//  CHARGEMENT
-// ============================================================
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOM chargé');
     initGasBridge();
-    
-    // Lancer le test automatique après 2 secondes
-    setTimeout(autoTest, 2000);
 });
 
 // ============================================================
@@ -2965,15 +2906,13 @@ function fermerMenu() {
 }
 
 // ============================================================
-//  MODE NUIT - CORRECTION
+//  MODE NUIT
 // ============================================================
 
 function basculerModeNuit() {
     var enabled = document.getElementById('toggleDarkMode').checked;
     localStorage.setItem('ngmada_dark_mode', enabled);
-    
     document.body.classList.toggle('dark-mode', enabled);
-    
     var elements = [
         document.getElementById('appShell'),
         document.getElementById('loginGate'),
@@ -2984,11 +2923,9 @@ function basculerModeNuit() {
         document.querySelector('.actu-full-header'),
         document.getElementById('menuOverlay')
     ];
-    
     elements.forEach(function(el) {
         if (el) el.classList.toggle('dark-mode', enabled);
     });
-    
     if (enabled) {
         document.documentElement.style.setProperty('--bg-dark', '#0a0f1a');
         document.documentElement.style.setProperty('--bg-card', '#111827');
@@ -3008,12 +2945,6 @@ function basculerModeNuit() {
         document.documentElement.style.setProperty('--nav-text-active', '#f1f5f9');
         document.documentElement.style.setProperty('--nav-bg', '#1a2332');
     }
-    
-    var toggleLabel = document.querySelector('.menu-toggle-slider');
-    if (toggleLabel) {
-        toggleLabel.style.transition = 'background 0.3s';
-    }
-    
     showToast('🌙 Mode nuit ' + (enabled ? 'activé' : 'désactivé'), 'info');
 }
 
@@ -3021,7 +2952,6 @@ function initDarkMode() {
     var darkMode = localStorage.getItem('ngmada_dark_mode') === 'true';
     var toggleDark = document.getElementById('toggleDarkMode');
     if (toggleDark) toggleDark.checked = darkMode;
-    
     if (darkMode) {
         document.body.classList.add('dark-mode');
         var appShell = document.getElementById('appShell');
@@ -3036,12 +2966,11 @@ function initDarkMode() {
 }
 
 // ============================================================
-//  LANGUE - CORRECTION
+//  LANGUE
 // ============================================================
 
 function changerLangue(langue) {
     localStorage.setItem('ngmada_langue', langue);
-    
     var navItems = document.querySelectorAll('.nav-item .nav-label');
     var labels = ['dashboard', 'members', 'contributions', 'cash', 'invoices'];
     navItems.forEach(function(item, index) {
@@ -3049,7 +2978,6 @@ function changerLangue(langue) {
             item.textContent = translations[langue][labels[index]];
         }
     });
-    
     var menuNavBtns = document.querySelectorAll('.menu-nav-btn');
     var menuLabels = ['settings', 'profile'];
     menuNavBtns.forEach(function(item, index) {
@@ -3060,24 +2988,20 @@ function changerLangue(langue) {
             }
         }
     });
-    
     var aboutTitle = document.querySelector('.menu-section h4');
     if (aboutTitle && aboutTitle.textContent.includes('À propos')) {
         if (translations[langue] && translations[langue]['about']) {
             aboutTitle.textContent = translations[langue]['about'];
         }
     }
-    
     var helpBtn = document.querySelector('.menu-section button[onclick="ouvrirAide()"]');
     if (helpBtn && translations[langue] && translations[langue]['help']) {
         helpBtn.textContent = '📘 ' + translations[langue]['help'];
     }
-    
     var logoutBtn = document.querySelector('.menu-btn-small[onclick="deconnecterDepuisMenu()"]');
     if (logoutBtn && translations[langue] && translations[langue]['logout']) {
         logoutBtn.textContent = '🚪 ' + translations[langue]['logout'];
     }
-    
     var darkModeLabels = document.querySelectorAll('.menu-section .menu-toggle');
     darkModeLabels.forEach(function(item) {
         var label = item.previousElementSibling;
@@ -3085,21 +3009,18 @@ function changerLangue(langue) {
             label.textContent = translations[langue]['dark_mode'];
         }
     });
-    
     var accentLabels = document.querySelectorAll('.menu-section div[style*="display:flex"] span');
     accentLabels.forEach(function(item) {
         if (item.textContent.includes('Couleur d\'accent') && translations[langue] && translations[langue]['accent_color']) {
             item.textContent = translations[langue]['accent_color'];
         }
     });
-    
     var langLabels = document.querySelectorAll('.menu-section label');
     langLabels.forEach(function(item) {
         if (item.textContent.includes('Langue') && translations[langue] && translations[langue]['language']) {
             item.textContent = translations[langue]['language'];
         }
     });
-    
     showToast('🌐 Langue changée en ' + langue, 'success');
 }
 
@@ -3118,12 +3039,10 @@ function changerCouleurAccent(couleur) {
     document.documentElement.style.setProperty('--gold', couleur);
     document.documentElement.style.setProperty('--nav-active', couleur);
     localStorage.setItem('ngmada_accent', couleur);
-    
     var elements = document.querySelectorAll('.stat-card.gold .value, .salutation h2 .highlight, .objectif-container .header .total, .resume-container .value, .badge-event, .logo-text, .user-avatar');
     elements.forEach(function(el) {
         el.style.color = couleur;
     });
-    
     showToast('🎨 Couleur d\'accent modifiée', 'success');
 }
 
@@ -3173,16 +3092,14 @@ function updateMenuContent() {
 }
 
 // ============================================================
-//  GESTION DES FAB - AFFICHAGE SELON L'ONGLET
+//  GESTION DES FAB
 // ============================================================
 
 function updateFabsVisibility(activeTab) {
     var fabMembre = document.getElementById('fabButton');
     var fabCaisse = document.getElementById('btnCaisseFab');
-    
     if (fabMembre) fabMembre.classList.remove('visible');
     if (fabCaisse) fabCaisse.classList.remove('visible');
-    
     if (activeTab === 'membres') {
         if (fabMembre) fabMembre.classList.add('visible');
     } else if (activeTab === 'caisse') {
@@ -3198,10 +3115,8 @@ function afficherGraphiqueApports(data) {
   var canvas = document.getElementById('graphiqueApports');
   if (!canvas) return;
   if (window._chartInstance) { try { window._chartInstance.destroy(); } catch(e) {} }
-  
   var labels = data && data.labels ? data.labels : ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû'];
   var values = data && data.data ? data.data : [500000, 750000, 300000, 400000, 600000, 800000, 450000, 650000];
-  
   try {
     window._chartInstance = new Chart(canvas, {
       type: 'bar',
@@ -3239,12 +3154,10 @@ function afficherCamembert(total) {
   var canvas = document.getElementById('graphiqueCamembert');
   if (!canvas) return;
   if (window._camembertInstance) { try { window._camembertInstance.destroy(); } catch(e) {} }
-  
   var totalSafe = total || 1805000;
   var cotisations = Math.round(totalSafe * 0.60);
   var dons = Math.round(totalSafe * 0.25);
   var autres = Math.round(totalSafe * 0.15);
-  
   try {
     window._camembertInstance = new Chart(canvas, {
       type: 'pie',
@@ -3533,9 +3446,7 @@ document.getElementById('rechercheMembre').addEventListener('input', function() 
 document.getElementById('btnNouveauMembre').addEventListener('click', function() {
     var panel = document.getElementById('panel');
     var fabMembre = document.getElementById('fabButton');
-    
     if (panel && panel.classList.contains('open')) {
-        // Si le formulaire est ouvert, on le ferme
         panel.classList.remove('open');
         fabMembre.textContent = '＋';
         fabMembre.classList.remove('close-mode');
@@ -3583,17 +3494,11 @@ document.getElementById('inputPhotoCachee').addEventListener('change', function(
   reader.readAsDataURL(f);
 });
 
-// ============================================================
-//  TOGGLE FORMULAIRE MEMBRE - AVEC CHANGEMENT DE TEXTE ET COULEUR
-// ============================================================
-
 function toggleMembreForm() {
     var panel = document.getElementById('panel');
     var fabMembre = document.getElementById('fabButton');
     if (!panel || !fabMembre) return;
-    
     if (panel.classList.contains('open')) {
-        // FERMETURE
         fabMembre.textContent = '＋';
         fabMembre.classList.remove('close-mode');
         panel.classList.remove('open');
@@ -3607,7 +3512,6 @@ function toggleMembreForm() {
         document.getElementById('fAdresse').value = '';
         document.getElementById('lienPhotoBox').style.display = 'none';
     } else {
-        // OUVERTURE
         fabMembre.textContent = '✕';
         fabMembre.classList.add('close-mode');
         requireAdmin(function() { 
@@ -3620,12 +3524,10 @@ function toggleMembreForm() {
 
 function ouvrirFiche(m) {
   m = m || {};
-  
   var titre = document.getElementById('sheetTitle');
   if (titre) {
     titre.textContent = m.id ? 'Modifier : ' + m.nom : 'Nouveau membre';
   }
-  
   document.getElementById('fId').value = m.id || '';
   document.getElementById('fNom').value = m.nom || '';
   document.getElementById('fTel').value = m.telephone || '';
@@ -3634,7 +3536,6 @@ function ouvrirFiche(m) {
   document.getElementById('fStatut').value = m.statut || 'Nouveau - à vérifier';
   document.getElementById('fNaissance').value = m.dateNaissance || '';
   document.getElementById('fAdresse').value = m.adressePostale || '';
-  
   var lienBox = document.getElementById('lienPhotoBox');
   var lienTxt = document.getElementById('lienPhotoTxt');
   if (m.id && lienBox && lienTxt) {
@@ -3644,16 +3545,11 @@ function ouvrirFiche(m) {
   } else if (lienBox) {
     lienBox.style.display = 'none';
   }
-  
   var fabMembre = document.getElementById('fabButton');
   fabMembre.textContent = '✕';
   fabMembre.classList.add('close-mode');
   document.getElementById('panel').classList.add('open');
 }
-
-// ============================================================
-//  BOUTON ANNULER - FORMULAIRE MEMBRE
-// ============================================================
 
 document.getElementById('btnCancel').addEventListener('click', function() {
     document.getElementById('panel').classList.remove('open');
@@ -3666,7 +3562,6 @@ document.getElementById('btnCancel').addEventListener('click', function() {
     document.getElementById('fNaissance').value = '';
     document.getElementById('fAdresse').value = '';
     document.getElementById('lienPhotoBox').style.display = 'none';
-    
     var fabMembre = document.getElementById('fabButton');
     fabMembre.textContent = '＋';
     fabMembre.classList.remove('close-mode');
@@ -3732,6 +3627,7 @@ function envoyerCarteEmail(m, btnEl) {
     }
   });
 }
+
 function changerPhotoProfil() {
   document.getElementById('inputPhotoProfil').click();
 }
@@ -3769,25 +3665,18 @@ document.getElementById('btnCloseCard').addEventListener('click', function() {
   document.getElementById('cardModalOverlay').style.display = 'none';
 });
 
-// ============================================================
-//  SUPPRESSION MEMBRE AVEC CASCADE - UTILISE LA VERSION AMÉLIORÉE
-// ============================================================
-
 function supprimerMembreWeb(idMembre, btnEl) {
   if (!idMembre) {
     showToast('❌ ID membre manquant.', 'error');
     return;
   }
-  
   if (!showConfirm('⚠️ Supprimer le membre ' + idMembre + ' et toutes ses données associées ?\nAction IRREVERSIBLE.')) {
     return;
   }
-  
   requireAdmin(function(pin) {
     var original = btnEl.textContent;
     btnEl.disabled = true; 
     btnEl.textContent = '⏳';
-    
     if (typeof google !== 'undefined' && google.script && google.script.run) {
       google.script.run
         .withSuccessHandler(function(res) {
@@ -3824,8 +3713,6 @@ function supprimerMembreWeb(idMembre, btnEl) {
 // ============================================================
 //  CAISSE
 // ============================================================
-
-var originalLoadCaisse = null;
 
 function loadCaisse() {
   if (typeof google !== 'undefined' && google.script && google.script.run) {
@@ -4015,65 +3902,6 @@ function filterCaisseDates() {
 }
 
 // ============================================================
-//  ACTUALISATION DE L'ONGLET ACTIF - VERSION CORRIGÉE
-// ============================================================
-
-function actualiserOngletActif() {
-    var ongletActif = document.querySelector('.nav-item.active');
-    if (!ongletActif) {
-        var premierOnglet = document.querySelector('.nav-item');
-        if (premierOnglet) {
-            premierOnglet.classList.add('active');
-            ongletActif = premierOnglet;
-        } else {
-            return;
-        }
-    }
-    
-    var tab = ongletActif.dataset.tab;
-    if (!tab) return;
-    
-    if (tab === 'caisse') {
-        return;
-    }
-    
-    switch(tab) {
-        case 'dashboard':
-            loadDashboardSilent();
-            break;
-        case 'membres':
-            loadedTabs['membres'] = false;
-            loadMembres();
-            break;
-        case 'apports':
-            if (typeof loadApports === 'function') {
-                loadedTabs['apports'] = false;
-                loadApports();
-            }
-            break;
-        case 'factures':
-            loadedTabs['factures'] = false;
-            loadFactures();
-            break;
-        default:
-            break;
-    }
-}
-
-function loadDashboardSilent() {
-    if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-            .withSuccessHandler(function(d) {
-                afficherStatsDashboard(d);
-            })
-            .withFailureHandler(function(err) {
-                console.error('❌ Erreur rafraîchissement dashboard:', err);
-            })
-            .getDashboardData();
-    }
-}
-
-// ============================================================
 //  CAISSE - FORMULAIRE ET TOGGLE
 // ============================================================
 
@@ -4081,9 +3909,7 @@ function toggleCaisseForm() {
     var wrapper = document.getElementById('caisseFormWrapper');
     var fabCaisse = document.getElementById('btnCaisseFab');
     if (!wrapper || !fabCaisse) return;
-    
     wrapper.classList.toggle('show');
-    
     if (wrapper.classList.contains('show')) {
         document.getElementById('frmCaisse').reset();
         document.getElementById('cMontant').value = 0;
@@ -4108,7 +3934,6 @@ function toggleCaisseForm() {
 document.getElementById('btnCaisseFab').addEventListener('click', function(e) {
     e.preventDefault();
     e.stopPropagation();
-    
     if (!adminUnlocked) {
         showToast('🔒 Veuillez déverrouiller Admin d\'abord.', 'error');
         var adminBtn = document.getElementById('adminLockBtn');
@@ -4395,16 +4220,11 @@ function updateFacturesButtonsVisibility() {
     });
 }
 
-// ============================================================
-//  VALIDATION FACTURE
-// ============================================================
-
 function validerFactureDepuisWeb(row, btnEl) {
     requireAdmin(function(pin) {
         btnEl.disabled = true; 
         var original = btnEl.textContent; 
         btnEl.textContent = 'Validation…';
-        
         if (typeof google !== 'undefined' && google.script && google.script.run) {
             google.script.run
                 .withSuccessHandler(function(numFacture) {
@@ -4458,10 +4278,6 @@ function validerFactureDepuisWeb(row, btnEl) {
         }
     });
 }
-
-// ============================================================
-//  SUPPRESSION FACTURE AVEC CASCADE - VERSION AMÉLIORÉE
-// ============================================================
 
 function supprimerFactureWeb(row, btnEl) {
   if (!row) return;
@@ -4830,10 +4646,9 @@ function publierCommentairePleinEcran(id, btn) {
 }
 
 // ============================================================
-//  ADMIN/PIN - VERSION UNIQUE ET CORRECTE
+//  ADMIN/PIN
 // ============================================================
 
-// ⚠️ UN SEUL ÉVÉNEMENT POUR LE BOUTON ADMIN ⚠️
 document.getElementById('adminLockBtn').addEventListener('click', function() {
     if (adminUnlocked) {
         adminUnlocked = false; 
@@ -4843,11 +4658,7 @@ document.getElementById('adminLockBtn').addEventListener('click', function() {
         loadedTabs['membres'] = false;
         appliquerVerrouCaisse();
         updateCaisseRecuPar();
-        
-        // Mettre à jour l'interface SANS rechargement
         updateInterfaceAfterAdminChange();
-        
-        // Fermer le formulaire caisse si ouvert
         var wrapper = document.getElementById('caisseFormWrapper');
         if (wrapper && wrapper.classList.contains('show')) {
             wrapper.classList.remove('show');
@@ -4857,8 +4668,6 @@ document.getElementById('adminLockBtn').addEventListener('click', function() {
                 fabCaisse.classList.remove('close-mode');
             }
         }
-        
-        // Fermer le formulaire membre si ouvert
         var panel = document.getElementById('panel');
         if (panel && panel.classList.contains('open')) {
             panel.classList.remove('open');
@@ -4868,7 +4677,6 @@ document.getElementById('adminLockBtn').addEventListener('click', function() {
                 fabMembre.classList.remove('close-mode');
             }
         }
-        
         showToast('🔒 Admin verrouillé', 'info');
     } else {
         document.getElementById('pinMsg').textContent = '';
@@ -4877,78 +4685,39 @@ document.getElementById('adminLockBtn').addEventListener('click', function() {
     }
 });
 
-// ✅ FONCTION : Mettre à jour l'interface après un changement Admin
 function updateInterfaceAfterAdminChange() {
     console.log('🔄 Mise à jour interface Admin - adminUnlocked =', adminUnlocked);
-    
-    // Mettre à jour les boutons Admin dans les listes déjà chargées
     updateCaisseButtonsVisibility();
     updateFacturesButtonsVisibility();
-    
-    // Mettre à jour les boutons Admin dans la liste des membres
     document.querySelectorAll('#membresContent .item .action-btn[data-action="modifier"]').forEach(function(btn) {
         btn.style.display = adminUnlocked ? 'inline-block' : 'none';
     });
     document.querySelectorAll('#membresContent .item .action-btn[data-action="supprimer"]').forEach(function(btn) {
         btn.style.display = adminUnlocked ? 'inline-block' : 'none';
     });
-    
-    // Mettre à jour le formulaire de la caisse
     appliquerVerrouCaisse();
     updateCaisseRecuPar();
-    
-    // Mettre à jour les boutons Admin dans les actualités
     updateActuAdminButtons();
-    
-    // Mettre à jour le statut du badge Admin
     var adminBtn = document.getElementById('adminLockBtn');
     if (adminBtn) {
         adminBtn.textContent = adminUnlocked ? '🔓' : '🔒';
         adminBtn.classList.toggle('on', adminUnlocked);
     }
-    
-    // Mettre à jour la liste des utilisateurs
     chargerListeUtilisateurs();
-    
-    // Gérer les FAB
     var activeTab = document.querySelector('.nav-item.active')?.dataset.tab;
     var fabMembre = document.getElementById('fabButton');
     var fabCaisse = document.getElementById('btnCaisseFab');
-    
     if (activeTab === 'membres') {
-        if (fabMembre) {
-            fabMembre.classList.add('visible');
-            var panel = document.getElementById('panel');
-            if (panel && panel.classList.contains('open')) {
-                fabMembre.textContent = '✕';
-                fabMembre.classList.add('close-mode');
-            } else {
-                fabMembre.textContent = '＋';
-                fabMembre.classList.remove('close-mode');
-            }
-        }
+        if (fabMembre) { fabMembre.classList.add('visible'); }
         if (fabCaisse) fabCaisse.classList.remove('visible');
     } else if (activeTab === 'caisse') {
-        if (fabCaisse) {
-            fabCaisse.classList.add('visible');
-            var wrapper = document.getElementById('caisseFormWrapper');
-            if (wrapper && wrapper.classList.contains('show')) {
-                fabCaisse.textContent = '✕';
-                fabCaisse.classList.add('close-mode');
-            } else {
-                fabCaisse.textContent = '＋';
-                fabCaisse.classList.remove('close-mode');
-            }
-        }
+        if (fabCaisse) { fabCaisse.classList.add('visible'); }
         if (fabMembre) fabMembre.classList.remove('visible');
     } else {
         if (fabMembre) fabMembre.classList.remove('visible');
         if (fabCaisse) fabCaisse.classList.remove('visible');
     }
-    
-    // RECHARGER LES DONNÉES EN ARRIÈRE-PLAN
     actualiserOngletActif();
-    
     showToast(adminUnlocked ? '🔓 Admin déverrouillé' : '🔒 Admin verrouillé', 'info');
 }
 
@@ -4961,7 +4730,6 @@ document.getElementById('btnPinValider').addEventListener('click', function() {
     var pin = document.getElementById('pinInput').value;
     var btn = this; 
     btn.disabled = true;
-    
     if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
             .withSuccessHandler(function(ok) {
@@ -4969,18 +4737,13 @@ document.getElementById('btnPinValider').addEventListener('click', function() {
                 if (ok) {
                     adminUnlocked = true; 
                     savedPin = pin;
-                    
-                    // Mettre à jour l'interface SANS rechargement
                     updateInterfaceAfterAdminChange();
-                    
                     document.getElementById('pinPanel').classList.remove('open');
-                    
                     if (pendingAction) { 
                         var a = pendingAction; 
                         pendingAction = null; 
                         a(savedPin); 
                     }
-                    
                     showToast('🔓 Admin déverrouillé', 'success');
                 } else { 
                     document.getElementById('pinMsg').textContent = '❌ PIN incorrect.'; 
@@ -4996,18 +4759,13 @@ document.getElementById('btnPinValider').addEventListener('click', function() {
         if (pin === '0000') {
             adminUnlocked = true; 
             savedPin = pin;
-            
-            // Mettre à jour l'interface SANS rechargement
             updateInterfaceAfterAdminChange();
-            
             document.getElementById('pinPanel').classList.remove('open');
-            
             if (pendingAction) { 
                 var a = pendingAction; 
                 pendingAction = null; 
                 a(savedPin); 
             }
-            
             showToast('🔓 Admin déverrouillé', 'success');
         } else { 
             document.getElementById('pinMsg').textContent = '❌ PIN incorrect.'; 
@@ -5182,17 +4940,14 @@ function deconnecterDepuisMenu() {
 }
 
 // ============================================================
-//  BOUTON FAB (MEMBRES) - TOGGLE AVEC CHANGEMENT DE COULEUR
+//  BOUTON FAB (MEMBRES)
 // ============================================================
 
 document.getElementById('fabButton').addEventListener('click', function() {
     var activeTab = document.querySelector('.nav-item.active')?.dataset.tab || 'dashboard';
-    
     if (activeTab === 'membres') {
-        // Sur l'onglet Membres, on fait un toggle
         toggleMembreForm();
     } else {
-        // Sur les autres onglets, on navigue vers Membres
         document.querySelector('.nav-item[data-tab="membres"]')?.click();
         setTimeout(function() {
             var fabMembre = document.getElementById('fabButton');
@@ -5363,7 +5118,43 @@ function closeMobileMenu() {
 }
 
 // ============================================================
-//  INITIALISATION
+//  ACTUALISATION DE L'ONGLET ACTIF
+// ============================================================
+
+function actualiserOngletActif() {
+    var ongletActif = document.querySelector('.nav-item.active');
+    if (!ongletActif) {
+        var premierOnglet = document.querySelector('.nav-item');
+        if (premierOnglet) {
+            premierOnglet.classList.add('active');
+            ongletActif = premierOnglet;
+        } else {
+            return;
+        }
+    }
+    var tab = ongletActif.dataset.tab;
+    if (!tab) return;
+    if (tab === 'caisse') { return; }
+    switch(tab) {
+        case 'dashboard': loadDashboardSilent(); break;
+        case 'membres': loadedTabs['membres'] = false; loadMembres(); break;
+        case 'apports': if (typeof loadApports === 'function') { loadedTabs['apports'] = false; loadApports(); } break;
+        case 'factures': loadedTabs['factures'] = false; loadFactures(); break;
+        default: break;
+    }
+}
+
+function loadDashboardSilent() {
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+            .withSuccessHandler(function(d) { afficherStatsDashboard(d); })
+            .withFailureHandler(function(err) { console.error('❌ Erreur rafraîchissement dashboard:', err); })
+            .getDashboardData();
+    }
+}
+
+// ============================================================
+//  INITIALISATION FINALE
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', function() {
