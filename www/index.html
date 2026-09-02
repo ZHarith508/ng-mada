@@ -2406,12 +2406,22 @@ function testFetch() {
         alert('❌ Erreur fetch:\n' + (err.message || err));
     });
 }
-// Initialiser le pont
+// Initialiser le pont - VERSION CORRIGÉE
 function initGasBridge() {
-    console.log('🌐 Mode:', isPWAorAPK() ? 'PWA/APK' : 'Navigateur');
+    // FORCER le mode PWA/Proxy car google.script.run n'est pas disponible
+    const hasNativeGAS = typeof google !== 'undefined' && 
+                         google.script && 
+                         google.script.run &&
+                         typeof google.script.run.withSuccessHandler === 'function';
     
-    if (isPWAorAPK()) {
-        console.log('📱 Mode PWA/APK - Pont Google Apps Script activé');
+    // Si google.script.run existe, l'utiliser, sinon utiliser le proxy
+    const useProxy = !hasNativeGAS || isPWAorAPK();
+    
+    console.log('🌐 Mode:', useProxy ? 'PROXY (PWA/APK)' : 'GAS natif');
+    console.log('📌 hasNativeGAS:', hasNativeGAS);
+    
+    if (useProxy) {
+        console.log('📱 Pont Google Apps Script activé via fetch');
         
         // Créer google.script.run si inexistant
         if (typeof google === 'undefined') {
@@ -2421,11 +2431,15 @@ function initGasBridge() {
             google.script = {};
         }
         
+        // Remplacer google.script.run par le proxy
         google.script.run = createGasProxy();
         
-        // Tester la connexion
         setTimeout(() => {
             console.log('🔗 Pont GAS prêt - URL:', GAS_CONFIG.url);
+            // Tester automatiquement après 1 seconde
+            setTimeout(() => {
+                testConnection();
+            }, 1000);
         }, 500);
     } else {
         console.log('🌐 Mode navigateur - Utilisation de google.script.run natif');
@@ -2436,6 +2450,31 @@ function initGasBridge() {
 document.addEventListener('DOMContentLoaded', function() {
     initGasBridge();
 });
+
+// Test automatique au chargement
+function autoTest() {
+    console.log('🔄 Test automatique de connexion...');
+    // Vérifier si google.script.run est disponible
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+        console.log('✅ google.script.run disponible');
+        // Tester la connexion
+        google.script.run
+            .withSuccessHandler(function(result) {
+                console.log('✅ Connexion GAS réussie:', result);
+            })
+            .withFailureHandler(function(err) {
+                console.log('❌ Connexion GAS échouée:', err);
+                console.log('💡 Utilisez testFetch() pour tester directement');
+            })
+            .testerConnexion({ test: 'auto' });
+    } else {
+        console.log('❌ google.script.run NON DISPONIBLE');
+        console.log('💡 Utilisez testFetch() pour tester directement');
+    }
+}
+
+// Appeler après l'initialisation
+setTimeout(autoTest, 2000);
 
 // ===== VARIABLES GLOBALES =====
 var STOCKAGE_TOKEN = 'ngmada_session_token';
