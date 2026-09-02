@@ -2282,7 +2282,7 @@ body.dark-mode .btn-save:hover {
 
 <script>
 // ============================================================
-//  SCRIPT NG-MADA - VERSION FINALE UNIFIÉE (CORRIGÉE)
+//  SCRIPT NG-MADA - VERSION FINALE CORRIGÉE
 //  AVEC SYNCHRONISATION COMPLÈTE
 // ============================================================
 
@@ -2306,20 +2306,23 @@ function isPWAorAPK() {
            navigator.standalone === true;
 }
 
-// Fonction qui remplace google.script.run
+// Fonction qui remplace google.script.run - VERSION CORRIGÉE
 function createGasProxy() {
+    // Créer un objet qui stocke les callbacks
+    const proxyObj = {};
+    
     const handler = {
         get(target, prop) {
             if (prop === 'withSuccessHandler') {
                 return function(callback) {
                     target._success = callback;
-                    return target;
+                    return target;  // ← Retourne target pour le chaînage
                 };
             }
             if (prop === 'withFailureHandler') {
                 return function(callback) {
                     target._failure = callback;
-                    return target;
+                    return target;  // ← Retourne target pour le chaînage
                 };
             }
             if (typeof prop === 'string' && !prop.startsWith('_')) {
@@ -2333,48 +2336,57 @@ function createGasProxy() {
                             data: data || {}
                         })
                     })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            throw new Error('HTTP ' + res.status);
+                        }
+                        return res.json();
+                    })
                     .then(result => {
                         if (target._success) target._success(result);
                     })
                     .catch(err => {
                         if (target._failure) target._failure(err);
+                        else console.error('❌ Erreur non gérée:', err);
                     });
                 };
             }
             return target[prop];
         }
     };
-    return new Proxy({}, handler);
+    
+    return new Proxy(proxyObj, handler);
 }
 
 // ============================================================
-//  FONCTIONS DE TEST
+//  FONCTIONS DE TEST - VERSION CORRIGÉE
 // ============================================================
 
 /**
  * Teste la connexion avec Google Apps Script
- * À utiliser dans la console (F12) pour vérifier la connexion
  */
 function testConnection() {
     console.log('🔍 Test de connexion vers GAS...');
     console.log('📍 URL:', GAS_CONFIG.url);
     
-    // Vérifier si google.script.run existe
     if (typeof google !== 'undefined' && google.script && google.script.run) {
         console.log('✅ google.script.run disponible');
         
-        // Appeler la méthode testerConnexion
-        google.script.run
-            .withSuccessHandler(function(result) {
-                console.log('✅ SUCCÈS:', result);
-                alert('✅ Connexion GAS OK !\n' + JSON.stringify(result, null, 2));
-            })
-            .withFailureHandler(function(err) {
-                console.error('❌ ÉCHEC:', err);
-                alert('❌ Erreur de connexion:\n' + (err.message || err));
-            })
-            .testerConnexion({ test: 'Hello from PWA!' });
+        try {
+            google.script.run
+                .withSuccessHandler(function(result) {
+                    console.log('✅ SUCCÈS:', result);
+                    alert('✅ Connexion GAS OK !\n' + JSON.stringify(result, null, 2));
+                })
+                .withFailureHandler(function(err) {
+                    console.error('❌ ÉCHEC:', err);
+                    alert('❌ Erreur de connexion:\n' + (err.message || err));
+                })
+                .testerConnexion({ test: 'Hello from PWA!' });
+        } catch (e) {
+            console.error('❌ Erreur appel:', e);
+            alert('❌ Erreur: ' + e.message);
+        }
     } else {
         console.error('❌ google.script.run NON DISPONIBLE');
         alert('❌ google.script.run non disponible');
@@ -2396,7 +2408,12 @@ function testFetch() {
             data: { test: 'Hello from fetch!' }
         })
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+        }
+        return res.json();
+    })
     .then(result => {
         console.log('✅ SUCCÈS (fetch):', result);
         alert('✅ Connexion fetch OK !\n' + JSON.stringify(result, null, 2));
@@ -2406,15 +2423,17 @@ function testFetch() {
         alert('❌ Erreur fetch:\n' + (err.message || err));
     });
 }
-// Initialiser le pont - VERSION CORRIGÉE
+
+// ============================================================
+//  INITIALISATION DU PONT - VERSION CORRIGÉE
+// ============================================================
+
 function initGasBridge() {
-    // FORCER le mode PWA/Proxy car google.script.run n'est pas disponible
     const hasNativeGAS = typeof google !== 'undefined' && 
                          google.script && 
                          google.script.run &&
                          typeof google.script.run.withSuccessHandler === 'function';
     
-    // Si google.script.run existe, l'utiliser, sinon utiliser le proxy
     const useProxy = !hasNativeGAS || isPWAorAPK();
     
     console.log('🌐 Mode:', useProxy ? 'PROXY (PWA/APK)' : 'GAS natif');
@@ -2423,7 +2442,6 @@ function initGasBridge() {
     if (useProxy) {
         console.log('📱 Pont Google Apps Script activé via fetch');
         
-        // Créer google.script.run si inexistant
         if (typeof google === 'undefined') {
             window.google = { script: {} };
         }
@@ -2431,52 +2449,61 @@ function initGasBridge() {
             google.script = {};
         }
         
-        // Remplacer google.script.run par le proxy
         google.script.run = createGasProxy();
         
         setTimeout(() => {
             console.log('🔗 Pont GAS prêt - URL:', GAS_CONFIG.url);
-            // Tester automatiquement après 1 seconde
-            setTimeout(() => {
-                testConnection();
-            }, 1000);
         }, 500);
     } else {
         console.log('🌐 Mode navigateur - Utilisation de google.script.run natif');
     }
 }
 
-// Appeler au chargement
-document.addEventListener('DOMContentLoaded', function() {
-    initGasBridge();
-});
+// ============================================================
+//  TEST AUTOMATIQUE - VERSION CORRIGÉE
+// ============================================================
 
-// Test automatique au chargement
 function autoTest() {
     console.log('🔄 Test automatique de connexion...');
-    // Vérifier si google.script.run est disponible
+    
     if (typeof google !== 'undefined' && google.script && google.script.run) {
         console.log('✅ google.script.run disponible');
-        // Tester la connexion
-        google.script.run
-            .withSuccessHandler(function(result) {
-                console.log('✅ Connexion GAS réussie:', result);
-            })
-            .withFailureHandler(function(err) {
-                console.log('❌ Connexion GAS échouée:', err);
-                console.log('💡 Utilisez testFetch() pour tester directement');
-            })
-            .testerConnexion({ test: 'auto' });
+        
+        try {
+            google.script.run
+                .withSuccessHandler(function(result) {
+                    console.log('✅ Connexion GAS réussie:', result);
+                })
+                .withFailureHandler(function(err) {
+                    console.log('❌ Connexion GAS échouée:', err);
+                    console.log('💡 Utilisez testFetch() pour tester directement');
+                })
+                .testerConnexion({ test: 'auto' });
+        } catch (e) {
+            console.log('❌ Erreur autoTest:', e.message);
+            console.log('💡 Utilisez testFetch() pour tester directement');
+        }
     } else {
         console.log('❌ google.script.run NON DISPONIBLE');
         console.log('💡 Utilisez testFetch() pour tester directement');
     }
 }
 
-// Appeler après l'initialisation
-setTimeout(autoTest, 2000);
+// ============================================================
+//  CHARGEMENT
+// ============================================================
 
-// ===== VARIABLES GLOBALES =====
+document.addEventListener('DOMContentLoaded', function() {
+    initGasBridge();
+    
+    // Lancer le test automatique après 2 secondes
+    setTimeout(autoTest, 2000);
+});
+
+// ============================================================
+//  VARIABLES GLOBALES
+// ============================================================
+
 var STOCKAGE_TOKEN = 'ngmada_session_token';
 var sessionToken = null;
 var adminUnlocked = false;
