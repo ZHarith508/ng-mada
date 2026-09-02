@@ -2887,3 +2887,50 @@ function mettreAJourNomDansApports(ss, idMembre, nouveauNom) {
     }
   }
 }
+
+// ============================================================
+//  POUR L'APK/PWA - ROUTAGE DES REQUÊTES
+// ============================================================
+
+function doPost(e) {
+    try {
+        const params = JSON.parse(e.postData.contents);
+        const method = params.method;
+        const data = params.data || {};
+        
+        Logger.log('📩 Appel méthode: ' + method);
+        Logger.log('📦 Données: ' + JSON.stringify(data));
+        
+        // Vérifier si la méthode existe
+        if (typeof this[method] === 'function') {
+            const result = this[method](data);
+            return ContentService
+                .createTextOutput(JSON.stringify(result))
+                .setMimeType(ContentService.MimeType.JSON);
+        } else {
+            return ContentService
+                .createTextOutput(JSON.stringify({ 
+                    success: false, 
+                    error: 'Méthode inconnue: ' + method 
+                }))
+                .setMimeType(ContentService.MimeType.JSON);
+        }
+    } catch (err) {
+        Logger.log('❌ Erreur doPost: ' + err.message);
+        return ContentService
+            .createTextOutput(JSON.stringify({ 
+                success: false, 
+                error: err.message 
+            }))
+            .setMimeType(ContentService.MimeType.JSON);
+    }
+}
+
+function doGet(e) {
+    return ContentService
+        .createTextOutput(JSON.stringify({ 
+            status: 'OK', 
+            message: 'NG-MADA API v2.0'
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+}
