@@ -4,13 +4,15 @@
 <base target="_top">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<!-- ===== PWA META TAGS ===== -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1tNXUPl0gC6aAeaJ5C4evF4zMaZJNOBgb&sz=w192">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-/* ============================================================
-   STYLESHEET COMPLET - NG-MADA (THÈME SOMBRE)
-   ============================================================ */
 * { box-sizing: border-box; }
-
 :root {
   --nav-height: 68px;
   --header-height: 80px;
@@ -36,7 +38,6 @@
   --radius: 12px;
   --radius-sm: 8px;
 }
-
 body {
   font-family: 'Segoe UI', Arial, sans-serif;
   background: var(--bg-dark);
@@ -49,8 +50,6 @@ h1, h2, h3, h4 { color: var(--text-primary); margin-top: 0; }
 p.sub { color: var(--text-secondary); font-size: 12px; margin: 0; }
 a { color: var(--nav-active); text-decoration: none; }
 a:hover { text-decoration: underline; }
-
-/* ===== HEADER ===== */
 header {
   display: flex;
   align-items: center;
@@ -65,7 +64,6 @@ header {
   backdrop-filter: blur(10px);
   gap: 12px;
 }
-
 .header-left {
   display: flex;
   align-items: center;
@@ -73,7 +71,6 @@ header {
   min-width: 80px;
   flex-shrink: 0;
 }
-
 .logo-wrapper {
   display: flex;
   flex-direction: column;
@@ -81,7 +78,6 @@ header {
   line-height: 1;
   gap: 0;
 }
-
 .logo-text {
   font-size: 18px;
   font-weight: 800;
@@ -89,12 +85,10 @@ header {
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
-
 .logo-icon {
   font-size: 36px;
   margin-top: -2px;
 }
-
 .menu-toggle {
   display: none;
   flex-direction: column;
@@ -124,7 +118,6 @@ header {
 .menu-toggle.active span:nth-child(3) {
   transform: rotate(-45deg) translate(4px, -5px);
 }
-
 .header-center {
   flex: 1;
   text-align: center;
@@ -140,7 +133,6 @@ header {
   color: var(--text-secondary);
   margin: 0;
 }
-
 .header-right {
   display: flex;
   align-items: center;
@@ -149,7 +141,6 @@ header {
   justify-content: flex-end;
   flex-shrink: 0;
 }
-
 #utilisateurBox {
   display: flex;
   align-items: center;
@@ -173,7 +164,6 @@ header {
   transition: var(--transition);
 }
 #lienDeconnexion:hover { background: rgba(248,113,113,0.15); }
-
 .admin-lock-btn {
   background: transparent;
   border: 2px solid var(--border-color);
@@ -194,7 +184,6 @@ header {
   border-color: var(--nav-active);
   background: rgba(250,204,21,0.1);
 }
-
 .nav-header-btn {
   background: transparent;
   border: 1px solid var(--border-color);
@@ -233,8 +222,6 @@ header {
 .nav-header-btn .header-badge.show {
   display: inline-block !important;
 }
-
-/* ===== USER AVATAR ===== */
 .user-avatar {
   width: 44px;
   height: 44px;
@@ -261,8 +248,6 @@ header {
   height: 100%;
   object-fit: cover;
 }
-
-/* ===== NAVIGATION ===== */
 .main-nav {
   background: var(--nav-bg);
   border-bottom: 1px solid var(--border-color);
@@ -281,7 +266,6 @@ header {
   max-width: 1400px;
   margin: 0 auto;
 }
-
 .nav-item {
   display: flex;
   align-items: center;
@@ -336,31 +320,24 @@ header {
   background: var(--nav-active);
   color: var(--bg-dark);
 }
-
-/* ===== CONTENU PRINCIPAL ===== */
 #mainContent {
   max-width: 1400px;
   margin: 0 auto;
   padding: 24px;
 }
-
 .view {
   display: none;
   animation: fadeIn 0.4s ease;
 }
 .view.active { display: block; }
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
-/* ===== DASHBOARD ===== */
 .salutation { margin-bottom: 16px; }
 .salutation h2 { font-size: 18px; font-weight: 700; margin: 0; }
 .salutation h2 .highlight { color: var(--gold); }
 .salutation p { font-size: 12px; color: var(--text-secondary); margin: 2px 0 0; }
-
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -394,7 +371,6 @@ header {
 .stat-card.blue .value { color: var(--blue); }
 .stat-card.red .value { color: var(--red); }
 .stat-card.full { grid-column: span 2; }
-
 .chart-container {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -411,7 +387,6 @@ header {
 }
 .chart-container canvas { max-height: 150px; width: 100% !important; }
 .chart-container.pie canvas { max-height: 200px; }
-
 .objectif-container {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -449,7 +424,6 @@ header {
   color: var(--text-muted);
   margin-top: 4px;
 }
-
 .actions-rapides {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -472,7 +446,6 @@ header {
 }
 .action-btn .icon { font-size: 20px; display: block; margin-bottom: 2px; }
 .action-btn .label { font-size: 10px; color: var(--text-secondary); }
-
 .activites-container, .evenements-container, .resume-container {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -504,7 +477,6 @@ header {
   flex-shrink: 0;
   margin-left: 8px;
 }
-
 .evenement-item {
   display: flex;
   justify-content: space-between;
@@ -528,7 +500,6 @@ header {
   background: var(--gold-dim);
   color: var(--gold);
 }
-
 .resume-container { text-align: center; }
 .resume-container .value {
   font-size: 22px;
@@ -540,7 +511,6 @@ header {
   color: var(--text-secondary);
   margin-top: 2px;
 }
-
 #messageContainer {
   background: var(--gold-dim);
   border: 1px solid var(--gold);
@@ -554,7 +524,6 @@ header {
   font-size: 13px;
   color: var(--gold);
 }
-
 .btn-export {
   background: var(--border-color);
   border: none;
@@ -570,8 +539,6 @@ header {
   gap: 6px;
 }
 .btn-export:hover { background: #475569; }
-
-/* ===== SKELETON ===== */
 .skeleton {
   background: linear-gradient(90deg, var(--bg-card) 25%, #2d3b4f 50%, var(--bg-card) 75%);
   background-size: 200% 100%;
@@ -582,21 +549,17 @@ header {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
-
-/* ===== FORMULAIRES ===== */
 label { display: block; font-size: 13px; color: #cbd5e1; margin: 14px 0 6px; }
 input, select, textarea {
   width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color);
   background: var(--bg-card); color: var(--text-primary); font-size: 14px; box-sizing: border-box;
 }
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--nav-active); }
-
 .btn-primary, button.primary {
   width: 100%; margin-top: 18px; padding: 12px; border: none; border-radius: 9px;
   background: #22c55e; color: #052e14; font-weight: 700; font-size: 14px; cursor: pointer;
 }
 .btn-primary:disabled, button.primary:disabled { opacity: 0.6; cursor: not-allowed; }
-
 .btn-new {
   width: 100%; padding: 10px; border: 1px dashed #22c55e; border-radius: 8px;
   background: transparent; color: #4ade80; font-size: 13px; cursor: pointer; margin-bottom: 14px;
@@ -605,8 +568,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 .btn-cancel:hover { background: #475569; }
 .btn-save { background: #22c55e; color: #052e14; }
 .btn-save:hover { background: #16a34a; }
-
-/* ===== ITEMS ===== */
 .item {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -625,22 +586,18 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 .item .montant.neg { color: #f87171; }
 .item .barre { height: 6px; background: var(--border-color); border-radius: 4px; margin-top: 8px; overflow: hidden; }
 .item .barre-fill { height: 100%; background: linear-gradient(90deg, #22c55e, var(--nav-active)); }
-
 .badge {
   display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 10px; margin-top: 6px;
 }
 .badge.ok { background: rgba(74,222,128,0.15); color: #4ade80; }
 .badge.warn { background: rgba(248,113,113,0.15); color: #f87171; }
 .badge.pending { background: rgba(148,163,184,0.2); color: #cbd5e1; }
-
 .item button.action-btn {
   margin-top: 8px; margin-right: 6px; padding: 6px 10px; border: none; border-radius: 7px;
   background: var(--border-color); color: var(--text-primary); font-size: 12px; cursor: pointer;
 }
 .item button.action-btn:hover { background: #475569; }
 .item button.action-btn:disabled { opacity: 0.5; cursor: default; }
-
-/* ===== AVATAR ===== */
 .avatar {
   width: 44px; height: 44px; border-radius: 50%; background: rgba(250,204,21,0.15);
   display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;
@@ -653,8 +610,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center;
   justify-content: center; font-size: 9px; border: 1px solid var(--bg-dark);
 }
-
-/* ===== SOLDE BANNER ===== */
 .solde-banner {
   display: flex; justify-content: space-between; background: var(--bg-card);
   border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px; margin: 14px 0;
@@ -665,8 +620,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 .solde-banner .col.entree .val { color: #4ade80; }
 .solde-banner .col.sortie .val { color: #f87171; }
 .solde-banner .sep { width: 1px; background: var(--border-color); margin: 0 10px; }
-
-/* ===== PANELS ===== */
 #panel, #pinPanel, #confirmPanel {
   position: fixed; inset: 0; background: rgba(0,0,0,0.6);
   display: none; align-items: flex-end; justify-content: center; z-index: 20;
@@ -682,10 +635,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 .row2 > div { flex: 1; }
 .actions { display: flex; gap: 10px; margin-top: 20px; }
 .actions button { flex: 1; padding: 11px; border: none; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; }
-
 #lienPhotoBox { display: none; margin-top: 14px; padding: 10px; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; font-size: 12px; word-break: break-all; color: #93c5fd; }
-
-/* ===== CAISSE ===== */
 #caisseFormWrapper {
   opacity: 0;
   max-height: 0;
@@ -720,7 +670,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 }
 #caisseFormWrapper.verrouille #caisseVerrouOverlay { display: flex; }
 #caisseVerrouOverlay.pulse { animation: pulseGold 0.6s ease 3; }
-
 .type-toggle { display: flex; gap: 10px; margin-top: 6px; }
 .type-toggle label { flex: 1; margin: 0; }
 .type-toggle input { display: none; }
@@ -730,15 +679,12 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 }
 .type-toggle input:checked + span.debit { background: #14532d; border-color: #22c55e; color: #bbf7d0; }
 .type-toggle input:checked + span.credit { background: #7f1d1d; border-color: #ef4444; color: #fecaca; }
-
 .msg {
   margin-top: 10px; font-size: 13px; text-align: center; min-height: 16px;
   padding: 8px 12px; border-radius: 8px;
 }
 .msg.ok { background: rgba(74,222,128,0.08); color: #86efac; }
 .msg.err { background: rgba(248,113,113,0.08); color: #fca5a5; }
-
-/* Champ "Reçu par" avec effet flou */
 #cRecuPar {
   transition: filter 0.5s ease, color 0.5s ease, background 0.3s ease;
   position: relative;
@@ -760,7 +706,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   background: var(--bg-card);
   border-color: var(--gold);
 }
-
 .recu-par-wrapper { position: relative; }
 .recu-par-wrapper::after {
   content: '🔒';
@@ -778,16 +723,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   opacity: 1;
   color: var(--gold);
 }
-
 @keyframes pulseGold {
   0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(250,204,21,0.4); }
   50% { transform: scale(1.1); box-shadow: 0 0 20px 10px rgba(250,204,21,0.2); }
   100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(250,204,21,0); }
 }
-
-/* ============================================================
-   FAB MEMBRES - BLEU/DORÉ
-   ============================================================ */
 #fabButton {
     position: fixed;
     bottom: 80px;
@@ -807,28 +747,20 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
     align-items: center;
     justify-content: center;
 }
-
 #fabButton.visible {
     display: flex !important;
 }
-
 #fabButton:hover {
     transform: scale(1.1);
     box-shadow: 0 6px 30px rgba(250, 204, 21, 0.5);
 }
-
 #fabButton.close-mode {
     background: linear-gradient(135deg, #dc2626, #facc15);
     box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
 }
-
 #fabButton.close-mode:hover {
     box-shadow: 0 6px 30px rgba(220, 38, 38, 0.5);
 }
-
-/* ============================================================
-   FAB CAISSE - VERT/DORÉ
-   ============================================================ */
 .btn-caisse-fab {
     position: fixed;
     bottom: 100px;
@@ -849,60 +781,28 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
     align-items: center;
     justify-content: center;
 }
-
 .btn-caisse-fab.visible {
     display: flex !important;
 }
-
 .btn-caisse-fab:hover {
     transform: scale(1.1);
     box-shadow: 0 6px 30px rgba(250, 204, 21, 0.5);
 }
-
 .btn-caisse-fab.close-mode {
     background: linear-gradient(135deg, #dc2626, #facc15);
     box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
 }
-
 .btn-caisse-fab.close-mode:hover {
     box-shadow: 0 6px 30px rgba(220, 38, 38, 0.5);
 }
-
 @media screen and (max-width: 768px) {
-    #fabButton {
-        bottom: 76px;
-        width: 48px;
-        height: 48px;
-        font-size: 22px;
-        right: 12px;
-    }
-    .btn-caisse-fab {
-        bottom: 80px;
-        right: 12px;
-        width: 50px;
-        height: 50px;
-        font-size: 26px;
-    }
+    #fabButton { bottom: 76px; width: 48px; height: 48px; font-size: 22px; right: 12px; }
+    .btn-caisse-fab { bottom: 80px; right: 12px; width: 50px; height: 50px; font-size: 26px; }
 }
-
 @media screen and (max-width: 400px) {
-    #fabButton {
-        bottom: 70px;
-        width: 42px;
-        height: 42px;
-        font-size: 18px;
-        right: 10px;
-    }
-    .btn-caisse-fab {
-        bottom: 74px;
-        width: 44px;
-        height: 44px;
-        font-size: 22px;
-        right: 10px;
-    }
+    #fabButton { bottom: 70px; width: 42px; height: 42px; font-size: 18px; right: 10px; }
+    .btn-caisse-fab { bottom: 74px; width: 44px; height: 44px; font-size: 22px; right: 10px; }
 }
-
-/* ===== LOADER ===== */
 #globalLoader {
   display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.8);
   z-index: 10000; align-items: center; justify-content: center; flex-direction: column;
@@ -919,8 +819,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   50% { opacity: 1; transform: scale(1.06); }
   100% { opacity: 0.4; transform: scale(1); }
 }
-
-/* ===== MENU PARAMÈTRES ===== */
 .menu-overlay {
   position: fixed;
   inset: 0;
@@ -944,7 +842,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   box-shadow: -4px 0 30px rgba(0,0,0,0.4);
 }
 .menu-panel.open { right: 0; }
-
 .menu-header {
   display: flex;
   align-items: center;
@@ -972,7 +869,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 .menu-user-email { font-size: 12px; color: var(--text-secondary); }
 .menu-close-btn { background: transparent; border: none; color: var(--text-secondary); font-size: 22px; cursor: pointer; padding: 0 4px; }
 .menu-close-btn:hover { color: var(--text-primary); }
-
 .menu-nav {
   display: flex;
   border-bottom: 1px solid var(--border-color);
@@ -994,7 +890,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 }
 .menu-nav-btn:hover { color: var(--text-primary); }
 .menu-nav-btn.active { color: var(--nav-active); border-bottom-color: var(--nav-active); }
-
 .menu-content {
   flex: 1;
   overflow-y: auto;
@@ -1002,7 +897,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   display: none;
 }
 .menu-content.active { display: block; }
-
 .menu-section { margin-bottom: 20px; }
 .menu-section h4 { 
     font-size: 14px; 
@@ -1011,8 +905,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
     position: relative;
     z-index: 1;
 }
-
-/* Correction: empêcher le chevauchement du mode nuit sur la langue */
 .menu-section .menu-toggle {
   display: flex;
   align-items: center;
@@ -1046,8 +938,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 }
 .menu-toggle input:checked + .menu-toggle-slider { background: var(--nav-active); }
 .menu-toggle input:checked + .menu-toggle-slider::after { transform: translateX(18px); }
-
-/* Correction pour le select de langue dans le menu */
 #selectLangue {
     width: 100%;
     padding: 8px 12px;
@@ -1059,8 +949,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
     position: relative;
     z-index: 1;
 }
-
-/* Correction pour le bouton "À propos" dans le menu */
 .menu-section .menu-btn-small {
   padding: 6px 14px;
   border: none;
@@ -1074,7 +962,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 }
 .menu-btn-small:hover { opacity: 0.8; }
 .menu-btn-small:disabled { opacity: 0.5; cursor: default; }
-
 .utilisateur-item {
   display: flex;
   align-items: center;
@@ -1100,8 +987,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 .utilisateur-item .u-email { font-size: 11px; color: #64748b; }
 .utilisateur-item .u-del { color: #f87171; cursor: pointer; font-size: 14px; padding: 4px; }
 .utilisateur-item .u-del:hover { color: #ef4444; }
-
-/* ===== CARTE MEMBRE ===== */
 .card-modal-overlay {
   position: fixed;
   inset: 0;
@@ -1164,8 +1049,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   cursor: pointer;
   z-index: 1200;
 }
-
-/* ===== LOGIN ===== */
 #loginGate {
   min-height: 100vh;
   display: flex;
@@ -1237,7 +1120,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   letter-spacing: 1px;
 }
 #loginGate p.sub { color: rgba(255,255,255,0.35); font-size: 12px; text-align: center; margin: 0 0 20px; }
-
 .login-tabs {
   display: flex;
   background: rgba(255,255,255,0.04);
@@ -1270,7 +1152,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 }
 .login-panneau { display: none; }
 .login-panneau.active { display: block; }
-
 .login-box input {
   width: 100%;
   padding: 14px 18px;
@@ -1288,7 +1169,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   box-shadow: 0 0 0 4px rgba(250,204,21,0.05);
 }
 .login-box input::placeholder { color: rgba(255,255,255,0.12); }
-
 .btn-login-primary {
   width: 100%;
   margin-top: 4px;
@@ -1308,7 +1188,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   box-shadow: 0 6px 30px rgba(250,204,21,0.25);
 }
 .btn-login-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-
 .form-options {
   display: flex;
   justify-content: space-between;
@@ -1326,8 +1205,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 }
 .forgot-link { font-size: 12px; color: rgba(250,204,21,0.4); text-decoration: none; }
 .forgot-link:hover { color: var(--nav-active); text-decoration: underline; }
-
-/* ===== ACTUALITÉS ===== */
 .actu-full-header {
   position: sticky;
   top: var(--header-height);
@@ -1388,7 +1265,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   color: var(--text-primary);
   background: rgba(255,255,255,0.05);
 }
-
 #view-actualites { padding-top: 0 !important; }
 #actuPleinEcranContent {
   display: grid;
@@ -1399,7 +1275,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   margin: 0 auto;
 }
 #formActuPleinEcran { margin: 0 16px 16px 16px; }
-
 #actuPleinEcranContent .actu-card {
   background: var(--bg-card);
   border-radius: 12px;
@@ -1495,7 +1370,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   color: #fff;
 }
 #actuPleinEcranContent .actu-card .admin-actions .btn-supprimer:hover { background: #dc2626; }
-
 #actuPleinEcranContent .actu-card .actu-commentaires {
   margin-top: 10px;
   padding-top: 10px;
@@ -1542,8 +1416,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   padding: 2px 8px;
   border-radius: 10px;
 }
-
-/* ===== RESPONSIVE ===== */
 @media screen and (max-width: 1024px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .stat-card.full { grid-column: span 2; }
@@ -1551,7 +1423,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   .header-center h1 { font-size: 16px; }
   #actuPleinEcranContent { grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 14px; }
 }
-
 @media screen and (max-width: 768px) {
   :root { --nav-height: 56px; --header-height: 56px; }
   header { padding: 6px 12px; }
@@ -1581,7 +1452,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   .nav-header-btn { padding: 2px 8px; height: 28px; }
   .nav-header-btn .header-icon { font-size: 18px; }
   .nav-header-btn .header-badge { font-size: 7px; padding: 1px 4px; min-width: 14px; }
-
   .main-nav {
     position: fixed;
     bottom: 0;
@@ -1612,7 +1482,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   .nav-badge { position: absolute; top: 0; right: 2px; font-size: 7px; padding: 1px 4px; }
   .nav-item.active::after { display: none; }
   .nav-item.active { background: rgba(250,204,21,0.15); }
-
   #mainContent { padding: 12px; padding-bottom: 80px; }
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
   .stat-card { padding: 10px; }
@@ -1622,14 +1491,12 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   .action-btn { padding: 8px; }
   .action-btn .icon { font-size: 18px; }
   .action-btn .label { font-size: 9px; }
-
   #loginGate .login-box { padding: 28px 18px 24px; max-width: 100%; margin: 0 10px; border-radius: 18px; }
   #loginGate .logo-wrap { width: 80px; height: 80px; }
   #loginGate h1 { font-size: 20px; }
   .login-tab-btn { font-size: 12px; padding: 8px 6px; }
   .login-box input { padding: 12px 14px; font-size: 16px; }
   .btn-login-primary { padding: 14px; font-size: 15px; }
-
   .actu-full-header { padding: 8px 12px; }
   .actu-full-header h2 { font-size: 14px; }
   .actu-header-actions .btn-actu-nouveau { font-size: 11px; padding: 4px 10px; }
@@ -1642,7 +1509,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   #actuPleinEcranContent .actu-card img { max-height: 150px; }
   #formActuPleinEcran { margin: 0 10px 10px 10px; }
 }
-
 @media screen and (max-width: 400px) {
   .logo-text { font-size: 20px !important; }
   .logo-icon { font-size: 20px !important; }
@@ -1653,7 +1519,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   .nav-icon { font-size: 15px; }
   .nav-label { font-size: 5px; }
   .user-avatar { width: 28px; height: 28px; font-size: 11px; border-width: 1.5px; }
-
   .salutation h2 { font-size: 14px; }
   .salutation p { font-size: 10px; }
   .stat-card { padding: 8px 10px; }
@@ -1677,7 +1542,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   #messageContainer { padding: 8px 10px; }
   #messageContainer #messageTexte { font-size: 11px; }
   .btn-export { font-size: 10px; padding: 4px 10px; }
-
   .actu-full-header { padding: 6px 10px; flex-wrap: nowrap; }
   .actu-full-header h2 { font-size: 12px; }
   .actu-header-actions .btn-actu-nouveau { font-size: 10px; padding: 3px 8px; }
@@ -1688,19 +1552,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
   #actuPleinEcranContent .actu-card img { max-height: 120px; }
   #actuPleinEcranContent .actu-card .actu-actions { flex-wrap: wrap; gap: 8px; }
   #actuPleinEcranContent .actu-card .actu-actions button { font-size: 11px; padding: 2px 6px; }
-  
-  /* Correction: garder les couleurs vert/rouge pour les montants en mobile 400 */
   .item .montant.pos { color: #4ade80 !important; }
   .item .montant.neg { color: #f87171 !important; }
   .solde-banner .col.entree .val { color: #4ade80 !important; }
   .solde-banner .col.sortie .val { color: #f87171 !important; }
 }
-
-/* ============================================================
-   DARK MODE COMPLET - CORRECTIONS
-   ============================================================ */
-
-/* Appliquer le mode nuit sur tout le body */
 body.dark-mode,
 body.dark-mode #appShell,
 body.dark-mode .main-nav,
@@ -1711,7 +1567,6 @@ body.dark-mode .actu-full-header,
 body.dark-mode .menu-overlay {
     background: #0a0f1a !important;
 }
-
 body.dark-mode .stat-card,
 body.dark-mode .chart-container,
 body.dark-mode .objectif-container,
@@ -1731,19 +1586,9 @@ body.dark-mode .card-modal-overlay .id-side {
     background: #111827 !important;
     border-color: #1f2937 !important;
 }
-
-body.dark-mode .user-avatar {
-    background: #111827 !important;
-}
-
-body.dark-mode .nav-item.active {
-    background: rgba(250,204,21,0.08) !important;
-}
-
-body.dark-mode #messageContainer {
-    background: rgba(250,204,21,0.05) !important;
-}
-
+body.dark-mode .user-avatar { background: #111827 !important; }
+body.dark-mode .nav-item.active { background: rgba(250,204,21,0.08) !important; }
+body.dark-mode #messageContainer { background: rgba(250,204,21,0.05) !important; }
 body.dark-mode input,
 body.dark-mode select,
 body.dark-mode textarea {
@@ -1751,13 +1596,9 @@ body.dark-mode textarea {
     border-color: #1f2937 !important;
     color: #e2e8f0 !important;
 }
-
 body.dark-mode input::placeholder,
 body.dark-mode select::placeholder,
-body.dark-mode textarea::placeholder {
-    color: #64748b !important;
-}
-
+body.dark-mode textarea::placeholder { color: #64748b !important; }
 body.dark-mode .header-center h1,
 body.dark-mode .header-center .sub,
 body.dark-mode .salutation h2,
@@ -1793,30 +1634,15 @@ body.dark-mode .actu-card .actu-actions button,
 body.dark-mode label,
 body.dark-mode .login-tab-btn,
 body.dark-mode .form-options label,
-body.dark-mode .forgot-link {
-    color: #e2e8f0 !important;
-}
-
+body.dark-mode .forgot-link { color: #e2e8f0 !important; }
 body.dark-mode .stat-card.gold .value { color: #facc15 !important; }
 body.dark-mode .stat-card.green .value { color: #4ade80 !important; }
 body.dark-mode .stat-card.red .value { color: #f87171 !important; }
 body.dark-mode .stat-card.blue .value { color: #60a5fa !important; }
-
-/* Toggle switch en mode nuit */
-body.dark-mode .menu-toggle-slider {
-    background: #1f2937 !important;
-}
-body.dark-mode .menu-toggle input:checked + .menu-toggle-slider {
-    background: #facc15 !important;
-}
-body.dark-mode .menu-toggle-slider::after {
-    background: #94a3b8 !important;
-}
-body.dark-mode .menu-toggle input:checked + .menu-toggle-slider::after {
-    background: #0f172a !important;
-}
-
-/* Login en mode nuit */
+body.dark-mode .menu-toggle-slider { background: #1f2937 !important; }
+body.dark-mode .menu-toggle input:checked + .menu-toggle-slider { background: #facc15 !important; }
+body.dark-mode .menu-toggle-slider::after { background: #94a3b8 !important; }
+body.dark-mode .menu-toggle input:checked + .menu-toggle-slider::after { background: #0f172a !important; }
 body.dark-mode #loginGate {
     background: linear-gradient(135deg, #05080f 0%, #0a0f1a 50%, #0f1528 100%) !important;
 }
@@ -1826,16 +1652,12 @@ body.dark-mode #loginGate .login-box {
 }
 body.dark-mode #loginGate h1,
 body.dark-mode #loginGate .baseline,
-body.dark-mode #loginGate .sub {
-    color: #e2e8f0 !important;
-}
+body.dark-mode #loginGate .sub { color: #e2e8f0 !important; }
 body.dark-mode #loginGate .login-tabs {
     background: rgba(255,255,255,0.03) !important;
     border-color: rgba(255,255,255,0.03) !important;
 }
-body.dark-mode #loginGate .login-tab-btn {
-    color: rgba(255,255,255,0.3) !important;
-}
+body.dark-mode #loginGate .login-tab-btn { color: rgba(255,255,255,0.3) !important; }
 body.dark-mode #loginGate .login-tab-btn.active {
     background: rgba(250,204,21,0.1) !important;
     color: #facc15 !important;
@@ -1845,17 +1667,9 @@ body.dark-mode #loginGate input {
     border-color: rgba(255,255,255,0.05) !important;
     color: #e2e8f0 !important;
 }
-body.dark-mode #loginGate input::placeholder {
-    color: rgba(255,255,255,0.1) !important;
-}
-body.dark-mode #loginGate .form-options label {
-    color: rgba(255,255,255,0.3) !important;
-}
-body.dark-mode #loginGate footer {
-    color: rgba(255,255,255,0.1) !important;
-}
-
-/* Caisse en mode nuit */
+body.dark-mode #loginGate input::placeholder { color: rgba(255,255,255,0.1) !important; }
+body.dark-mode #loginGate .form-options label { color: rgba(255,255,255,0.3) !important; }
+body.dark-mode #loginGate footer { color: rgba(255,255,255,0.1) !important; }
 body.dark-mode #caisseFormWrapper.show {
     background: #111827 !important;
     border-color: #1f2937 !important;
@@ -1880,8 +1694,6 @@ body.dark-mode .type-toggle input:checked + span.credit {
     background: #7f1d1d !important;
     border-color: #ef4444 !important;
 }
-
-/* FAB en mode nuit */
 body.dark-mode #fabButton {
     background: linear-gradient(135deg, #1e3a5f, #facc15) !important;
 }
@@ -1892,8 +1704,6 @@ body.dark-mode #fabButton.close-mode,
 body.dark-mode .btn-caisse-fab.close-mode {
     background: linear-gradient(135deg, #7f1d1d, #facc15) !important;
 }
-
-/* Badges en mode nuit */
 body.dark-mode .badge.ok {
     background: rgba(74,222,128,0.15) !important;
     color: #4ade80 !important;
@@ -1906,65 +1716,34 @@ body.dark-mode .badge.pending {
     background: rgba(148,163,184,0.2) !important;
     color: #cbd5e1 !important;
 }
-
-/* Panels en mode nuit */
 body.dark-mode #sheet,
 body.dark-mode #pinSheet,
-body.dark-mode #confirmSheet {
-    background: #111827 !important;
-}
+body.dark-mode #confirmSheet { background: #111827 !important; }
 body.dark-mode #sheet h3,
 body.dark-mode #pinSheet h3,
-body.dark-mode #confirmSheet h3 {
-    color: #e2e8f0 !important;
-}
-body.dark-mode #sheet label {
-    color: #94a3b8 !important;
-}
+body.dark-mode #confirmSheet h3 { color: #e2e8f0 !important; }
+body.dark-mode #sheet label { color: #94a3b8 !important; }
 body.dark-mode #sheet input,
 body.dark-mode #sheet select {
     background: #0f172a !important;
     border-color: #1f2937 !important;
     color: #e2e8f0 !important;
 }
-
 body.dark-mode .btn-cancel {
     background: #1f2937 !important;
     color: #94a3b8 !important;
 }
-body.dark-mode .btn-cancel:hover {
-    background: #374151 !important;
-}
+body.dark-mode .btn-cancel:hover { background: #374151 !important; }
 body.dark-mode .btn-save {
     background: #22c55e !important;
     color: #052e14 !important;
 }
-body.dark-mode .btn-save:hover {
-    background: #16a34a !important;
-}
-
-/* Correction pour le menu paramètres - éviter le chevauchement */
-.menu-content {
-    position: relative;
-    z-index: 1;
-}
-.menu-section {
-    position: relative;
-    z-index: 1;
-    margin-bottom: 20px;
-}
-.menu-section .menu-toggle {
-    position: relative;
-    z-index: 2;
-}
-#selectLangue {
-    position: relative;
-    z-index: 2;
-}
-.menu-section button {
-    position: relative;
-    z-index: 2;
-}
+body.dark-mode .btn-save:hover { background: #16a34a !important; }
+.menu-content { position: relative; z-index: 1; }
+.menu-section { position: relative; z-index: 1; margin-bottom: 20px; }
+.menu-section .menu-toggle { position: relative; z-index: 2; }
+#selectLangue { position: relative; z-index: 2; }
+.menu-section button { position: relative; z-index: 2; }
 </style>
 </head>
 <body>
@@ -1990,12 +1769,10 @@ body.dark-mode .btn-save:hover {
     <h1>NE<span class="accent">XT</span> GENERATION MADA</h1>
     <p class="baseline">"NG-MADA"</p>
     <p class="sub">Gestion des apports, caisse et membres</p>
-
     <div class="login-tabs">
       <button type="button" class="login-tab-btn active" data-panneau="connexion">🔐 Connexion</button>
       <button type="button" class="login-tab-btn" data-panneau="inscription">📝 Inscription</button>
     </div>
-
     <div class="login-panneau active" id="panneau-connexion">
       <form id="frmConnexion">
         <label style="display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);margin:0 0 5px;letter-spacing:0.3px;">📧 Adresse e-mail</label>
@@ -2010,7 +1787,6 @@ body.dark-mode .btn-save:hover {
         <div class="msg" id="msgConnexion"></div>
       </form>
     </div>
-
     <div id="resetPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;align-items:center;justify-content:center;">
       <div style="background:#111827;max-width:400px;width:100%;border-radius:16px;padding:24px;box-shadow:0 8px 40px rgba(0,0,0,0.4);">
         <h3 style="color:#f1f5f9;margin:0 0 16px;font-size:18px;">🔑 Réinitialiser le mot de passe</h3>
@@ -2024,7 +1800,6 @@ body.dark-mode .btn-save:hover {
         <div class="msg" id="resetMsg"></div>
       </div>
     </div>
-
     <div class="login-panneau" id="panneau-inscription">
       <form id="frmInscription">
         <label style="display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);margin:0 0 5px;letter-spacing:0.3px;">👤 Nom &amp; Prénom</label>
@@ -2282,8 +2057,7 @@ body.dark-mode .btn-save:hover {
 
 <script>
 // ============================================================
-//  SCRIPT NG-MADA - VERSION FINALE COMPLÈTE
-//  AVEC SYNCHRONISATION COMPLÈTE ET MODE DÉMO
+//  SCRIPT NG-MADA - VERSION FINALE AVEC MODE DÉMO PERMANENT
 // ============================================================
 
 console.log('🚀 Script NG-MADA chargé');
@@ -2291,12 +2065,11 @@ console.log('🚀 Script NG-MADA chargé');
 // ============================================================
 //  PONT POUR APK/PWA - CONNEXION À GOOGLE APPS SCRIPT
 // ============================================================
-// 🔴 REMPLACEZ PAR VOTRE URL GAS 🔴
+
 const GAS_CONFIG = {
     url: 'https://script.google.com/macros/s/AKfycbzu3LlRkWRi6JrjBFpvHM_oJVWUUGnl7WvxhxcGOvZrX0-JLHkt9XxN5W-TayArg35a3w/exec'
 };
 
-// Détection du mode (PWA, APK ou navigateur)
 function isPWAorAPK() {
     return navigator.userAgent.indexOf('NG-MADA-APP') !== -1 ||
            window.location.protocol === 'file:' ||
@@ -2306,7 +2079,7 @@ function isPWAorAPK() {
 }
 
 // ============================================================
-//  PROXY POUR google.script.run - VERSION CORRIGÉE
+//  PROXY POUR google.script.run
 // ============================================================
 
 function createGasProxy() {
@@ -2412,13 +2185,12 @@ function testFetch() {
 }
 
 // ============================================================
-//  MODE DÉMO - DONNÉES SIMULÉES (POUR GITHUB PAGES)
+//  MODE DÉMO PERMANENT - ACTIVATION AUTOMATIQUE
 // ============================================================
 
 function activateDemoMode() {
-    console.log('🔧 Activation du mode démo...');
+    console.log('🔧 Activation du mode démo permanent...');
     
-    // Créer google.script.run si inexistant
     if (typeof google === 'undefined') {
         window.google = { script: {} };
     }
@@ -2426,183 +2198,137 @@ function activateDemoMode() {
         google.script = {};
     }
     
-    // Données simulées
-    const demoData = {
-        getDashboardData: function(data, callback) {
-            setTimeout(function() {
-                callback({
-                    totalVerse: 1805000,
-                    totalReste: 4195000,
-                    associesValides: 5,
-                    enAttente: 3,
-                    joursRestants: 33,
-                    soldeCaisse: -9157000
-                });
-            }, 300);
+    const DEMO_DATA = {
+        totalVerse: 1805000,
+        totalReste: 4195000,
+        associesValides: 5,
+        enAttente: 3,
+        joursRestants: 33,
+        soldeCaisse: -9157000,
+        membres: [
+            { id: 'M0001', nom: 'Rakoto Jean', telephone: '032 12 345 67', statut: 'Associé validé', email: 'rakoto@test.com' },
+            { id: 'M0002', nom: 'Rakotomalala Mirana', telephone: '033 98 765 43', statut: 'Nouveau - à vérifier', email: 'mirana@test.com' },
+            { id: 'M0003', nom: 'Hery Tiana', telephone: '034 56 789 01', statut: 'Associé validé', email: 'hery@test.com' }
+        ],
+        apports: [
+            { idMembre: 'M0001', nom: 'Rakoto Jean', apportPrevu: 1000000, montantVerse: 500000, resteAVerser: 500000, pourcentage: 0.5, statut: 'Partiellement versé', factures: ['NG-2026-00001'] },
+            { idMembre: 'M0002', nom: 'Rakotomalala Mirana', apportPrevu: 1000000, montantVerse: 0, resteAVerser: 1000000, pourcentage: 0, statut: 'Nouveau - à vérifier', factures: [] },
+            { idMembre: 'M0003', nom: 'Hery Tiana', apportPrevu: 1000000, montantVerse: 800000, resteAVerser: 200000, pourcentage: 0.8, statut: 'Partiellement versé', factures: ['NG-2026-00002'] }
+        ],
+        factures: [
+            { row: 2, numFacture: '', nom: 'ANTOINNE', montant: 20000, modePaiement: 'Airtel Money', datePaiement: '12/08/2026', validation: '' },
+            { row: 3, numFacture: 'NG-2026-00001', nom: 'Rakoto Jean', montant: 500000, modePaiement: 'MVola', datePaiement: '10/08/2026', validation: 'VALIDER' }
+        ],
+        finance: {
+            items: [
+                { row: 1, date: '10/08/2026', type: 'Entrée', categorie: 'Apport associé', description: 'Apport Rakoto Jean', entree: 500000, sortie: 0, numFacture: 'NG-2026-00001', enregistrePar: 'Admin' }
+            ],
+            totalEntree: 500000,
+            totalSortie: 0
         },
-        getMembres: function(data, callback) {
-            setTimeout(function() {
-                callback([
-                    { id: 'M0001', nom: 'Rakoto Jean', telephone: '032 12 345 67', statut: 'Associé validé', email: 'rakoto@test.com', photo: '' },
-                    { id: 'M0002', nom: 'Rakotomalala Mirana', telephone: '033 98 765 43', statut: 'Nouveau - à vérifier', email: 'mirana@test.com', photo: '' },
-                    { id: 'M0003', nom: 'Hery Tiana', telephone: '034 56 789 01', statut: 'Associé validé', email: 'hery@test.com', photo: '' }
-                ]);
-            }, 300);
-        },
-        getApportsData: function(data, callback) {
-            setTimeout(function() {
-                callback([
-                    { idMembre: 'M0001', nom: 'Rakoto Jean', apportPrevu: 1000000, montantVerse: 500000, resteAVerser: 500000, pourcentage: 0.5, statut: 'Partiellement versé', factures: ['NG-2026-00001'] },
-                    { idMembre: 'M0002', nom: 'Rakotomalala Mirana', apportPrevu: 1000000, montantVerse: 0, resteAVerser: 1000000, pourcentage: 0, statut: 'Nouveau - à vérifier', factures: [] },
-                    { idMembre: 'M0003', nom: 'Hery Tiana', apportPrevu: 1000000, montantVerse: 800000, resteAVerser: 200000, pourcentage: 0.8, statut: 'Partiellement versé', factures: ['NG-2026-00002'] }
-                ]);
-            }, 300);
-        },
-        getFacturesData: function(data, callback) {
-            setTimeout(function() {
-                callback([
-                    { row: 2, numFacture: '', nom: 'ANTOINNE', montant: 20000, modePaiement: 'Airtel Money', datePaiement: '12/08/2026', validation: '' },
-                    { row: 3, numFacture: 'NG-2026-00001', nom: 'Rakoto Jean', montant: 500000, modePaiement: 'MVola', datePaiement: '10/08/2026', validation: 'VALIDER' }
-                ]);
-            }, 300);
-        },
-        getFinanceData: function(data, callback) {
-            setTimeout(function() {
-                callback({
-                    items: [
-                        { row: 1, date: '10/08/2026', type: 'Entrée', categorie: 'Apport associé', description: 'Apport Rakoto Jean', entree: 500000, sortie: 0, numFacture: 'NG-2026-00001', enregistrePar: 'Admin' }
-                    ],
-                    totalEntree: 500000,
-                    totalSortie: 0
-                });
-            }, 300);
-        },
-        getApportsMensuels: function(data, callback) {
-            setTimeout(function() {
-                callback({
-                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû'],
-                    data: [50000, 75000, 30000, 40000, 60000, 80000, 45000, 65000]
-                });
-            }, 300);
-        },
-        getProfilUtilisateur: function(email, callback) {
-            setTimeout(function() {
-                callback({
-                    success: true,
-                    nom: 'Admin NG-MADA',
-                    email: email || 'admin@ngmada.com',
-                    photo: '',
-                    dateCreation: '01/09/2026'
-                });
-            }, 300);
-        },
-        getListeUtilisateurs: function(data, callback) {
-            setTimeout(function() {
-                callback([
-                    { nom: 'Admin NG-MADA', email: 'admin@ngmada.com', estEnLigne: true },
-                    { nom: 'Utilisateur Test', email: 'test@ngmada.com', estEnLigne: false }
-                ]);
-            }, 300);
-        },
-        connecterUtilisateur: function(data, callback) {
-            setTimeout(function() {
-                if (data && data.email && data.motDePasse) {
-                    callback({ success: true, token: 'demo_token_' + Date.now(), nom: 'Utilisateur Démo', email: data.email });
-                } else {
-                    callback({ success: false, message: 'Email ou mot de passe incorrect' });
-                }
-            }, 300);
-        },
-        inscrireUtilisateur: function(data, callback) {
-            setTimeout(function() {
-                callback({ success: true });
-            }, 300);
-        },
-        verifierPin: function(pin, callback) {
-            setTimeout(function() {
-                callback(pin === '1986' || pin === '0000');
-            }, 300);
-        },
-        saveMembre: function(data, callback) {
-            setTimeout(function() {
-                callback({ success: true, id: 'M' + String(Math.floor(Math.random() * 9999)).padStart(4, '0') });
-            }, 300);
-        },
-        validerFactureWeb: function(pin, row, numFacture, callback) {
-            setTimeout(function() {
-                callback({ success: true, numFacture: numFacture || 'NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') });
-            }, 300);
-        },
-        supprimerMembreAvecCascade: function(pin, id, callback) {
-            setTimeout(function() {
-                callback({ success: true, message: 'Membre supprimé avec succès' });
-            }, 300);
-        },
-        supprimerFactureAvecCascade: function(pin, row, callback) {
-            setTimeout(function() {
-                callback({ success: true, message: 'Facture supprimée avec succès' });
-            }, 300);
-        },
-        ajouterMouvementFinance: function(pin, infos, callback) {
-            setTimeout(function() {
-                callback({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') });
-            }, 300);
-        },
-        previsualiserMouvementFinance: function(pin, infos, callback) {
-            setTimeout(function() {
-                callback({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') });
-            }, 300);
-        },
-        envoyerCarteMembreParEmail: function(pin, id, callback) {
-            setTimeout(function() {
-                callback({ success: true, email: 'membre@test.com' });
-            }, 300);
-        },
-        envoyerJustificatifParEmail: function(pin, row, callback) {
-            setTimeout(function() {
-                callback({ success: true, email: 'admin@test.com' });
-            }, 300);
-        },
-        genererNumeroFacture: function(callback) {
-            setTimeout(function() {
-                callback('NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0'));
-            }, 300);
-        },
-        testerConnexion: function(data, callback) {
-            setTimeout(function() {
-                callback({ success: true, message: '✅ Mode démo actif !' });
-            }, 300);
-        },
-        deconnecterUtilisateur: function(token, callback) {
-            setTimeout(function() {
-                callback({ success: true });
-            }, 300);
-        },
-        mettreAJourDateConnexion: function(email, callback) {
-            setTimeout(function() {
-                callback({ success: true });
-            }, 300);
-        },
-        afficherApp: function(nom) {
-            console.log('✅ Mode démo - Affichage de l\'application');
-            var loginGate = document.getElementById('loginGate');
-            var appShell = document.getElementById('appShell');
-            if (loginGate) loginGate.style.display = 'none';
-            if (appShell) appShell.style.display = 'block';
-            document.getElementById('utilisateurNom').textContent = nom || 'Admin';
-            document.getElementById('userNameDisplay').textContent = nom || 'Admin';
-            if (!loadedTabs['dashboard']) {
-                loadedTabs['dashboard'] = true;
-                loadDashboard();
-            }
+        chartData: {
+            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû'],
+            data: [50000, 75000, 30000, 40000, 60000, 80000, 45000, 65000]
         }
     };
     
-    // Créer l'objet de base
+    const demoHandlers = {
+        getDashboardData: function(data, cb) {
+            setTimeout(function() {
+                cb({
+                    totalVerse: DEMO_DATA.totalVerse,
+                    totalReste: DEMO_DATA.totalReste,
+                    associesValides: DEMO_DATA.associesValides,
+                    enAttente: DEMO_DATA.enAttente,
+                    joursRestants: DEMO_DATA.joursRestants,
+                    soldeCaisse: DEMO_DATA.soldeCaisse
+                });
+            }, 200);
+        },
+        getMembres: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.membres); }, 200);
+        },
+        getApportsData: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.apports); }, 200);
+        },
+        getFacturesData: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.factures); }, 200);
+        },
+        getFinanceData: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.finance); }, 200);
+        },
+        getApportsMensuels: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.chartData); }, 200);
+        },
+        getProfilUtilisateur: function(email, cb) {
+            setTimeout(function() {
+                cb({ success: true, nom: 'Admin NG-MADA', email: email || 'admin@ngmada.com', photo: '', dateCreation: '01/09/2026' });
+            }, 200);
+        },
+        getListeUtilisateurs: function(data, cb) {
+            setTimeout(function() {
+                cb([
+                    { nom: 'Admin NG-MADA', email: 'admin@ngmada.com', estEnLigne: true },
+                    { nom: 'Utilisateur Test', email: 'test@ngmada.com', estEnLigne: false }
+                ]);
+            }, 200);
+        },
+        connecterUtilisateur: function(data, cb) {
+            setTimeout(function() {
+                if (data && data.email && data.motDePasse) {
+                    cb({ success: true, token: 'demo_token_' + Date.now(), nom: 'Utilisateur Démo', email: data.email });
+                } else {
+                    cb({ success: false, message: 'Email ou mot de passe incorrect' });
+                }
+            }, 200);
+        },
+        inscrireUtilisateur: function(data, cb) {
+            setTimeout(function() { cb({ success: true }); }, 200);
+        },
+        verifierPin: function(pin, cb) {
+            setTimeout(function() { cb(pin === '1986' || pin === '0000'); }, 200);
+        },
+        saveMembre: function(data, cb) {
+            setTimeout(function() { cb({ success: true, id: 'M' + String(Math.floor(Math.random() * 9999)).padStart(4, '0') }); }, 200);
+        },
+        validerFactureWeb: function(pin, row, numFacture, cb) {
+            setTimeout(function() { cb({ success: true, numFacture: numFacture || 'NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200);
+        },
+        supprimerMembreAvecCascade: function(pin, id, cb) {
+            setTimeout(function() { cb({ success: true, message: 'Membre supprimé avec succès' }); }, 200);
+        },
+        supprimerFactureAvecCascade: function(pin, row, cb) {
+            setTimeout(function() { cb({ success: true, message: 'Facture supprimée avec succès' }); }, 200);
+        },
+        ajouterMouvementFinance: function(pin, infos, cb) {
+            setTimeout(function() { cb({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200);
+        },
+        previsualiserMouvementFinance: function(pin, infos, cb) {
+            setTimeout(function() { cb({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200);
+        },
+        envoyerCarteMembreParEmail: function(pin, id, cb) {
+            setTimeout(function() { cb({ success: true, email: 'membre@test.com' }); }, 200);
+        },
+        envoyerJustificatifParEmail: function(pin, row, cb) {
+            setTimeout(function() { cb({ success: true, email: 'admin@test.com' }); }, 200);
+        },
+        genererNumeroFacture: function(cb) {
+            setTimeout(function() { cb('NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0')); }, 200);
+        },
+        testerConnexion: function(data, cb) {
+            setTimeout(function() { cb({ success: true, message: '✅ Mode démo actif !' }); }, 200);
+        },
+        deconnecterUtilisateur: function(token, cb) {
+            setTimeout(function() { cb({ success: true }); }, 200);
+        },
+        mettreAJourDateConnexion: function(email, cb) {
+            setTimeout(function() { cb({ success: true }); }, 200);
+        }
+    };
+    
     const runObj = {
         _success: null,
         _failure: null,
-        
         withSuccessHandler: function(callback) {
             this._success = callback;
             return this;
@@ -2613,7 +2339,6 @@ function activateDemoMode() {
         }
     };
     
-    // Ajouter toutes les méthodes dynamiquement
     const handler = {
         get(target, prop) {
             if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
@@ -2621,8 +2346,8 @@ function activateDemoMode() {
             }
             if (typeof prop === 'string' && !prop.startsWith('_')) {
                 return function(data) {
-                    if (demoData[prop]) {
-                        demoData[prop](data, function(result) {
+                    if (demoHandlers[prop]) {
+                        demoHandlers[prop](data, function(result) {
                             if (target._success) target._success(result);
                         });
                     } else {
@@ -2637,41 +2362,64 @@ function activateDemoMode() {
     };
     
     google.script.run = new Proxy(runObj, handler);
+    console.log('✅ Proxy démo permanent activé !');
     
-    console.log('✅ Mode démo activé avec données simulées !');
-    console.log('📊 L\'application fonctionne maintenant localement.');
+    // Forcer l'affichage
+    var loginGate = document.getElementById('loginGate');
+    if (loginGate) loginGate.style.display = 'none';
     
-    // Forcer l'affichage de l'application
-    if (typeof demoData.afficherApp === 'function') {
-        demoData.afficherApp('Admin');
+    var appShell = document.getElementById('appShell');
+    if (appShell) appShell.style.display = 'block';
+    
+    document.getElementById('utilisateurNom').textContent = 'Admin';
+    document.getElementById('userNameDisplay').textContent = 'Admin';
+    
+    // Charger les données
+    loadedTabs = {};
+    if (typeof loadDashboard === 'function') {
+        loadDashboard();
     }
     
-    // Recharger l'interface
-    loadedTabs = {};
+    setTimeout(function() {
+        if (typeof loadMembres === 'function') {
+            loadMembres();
+        }
+    }, 300);
     
     setTimeout(function() {
-        if (typeof loadDashboard === 'function') {
-            loadDashboard();
-            console.log('🔄 Interface rechargée avec données de démonstration');
+        if (typeof loadApports === 'function') {
+            loadApports();
         }
-    }, 500);
+    }, 600);
+    
+    setTimeout(function() {
+        if (typeof loadFactures === 'function') {
+            loadFactures();
+        }
+    }, 900);
+    
+    setTimeout(function() {
+        if (typeof loadCaisse === 'function') {
+            loadCaisse();
+        }
+    }, 1200);
+    
+    console.log('✅ Mode démo permanent activé avec succès !');
 }
 
 // ============================================================
-//  INITIALISATION DU PONT - VERSION UNIQUE
+//  INITIALISATION DU PONT
 // ============================================================
 
 function initGasBridge() {
-    // Vérifier si on est sur GitHub Pages (CORS problématique)
     const isGitHubPages = window.location.hostname.includes('github.io');
     const hasNativeGAS = typeof google !== 'undefined' && 
                          google.script && 
                          google.script.run &&
                          typeof google.script.run.withSuccessHandler === 'function';
     
-    // Si on est sur GitHub Pages ou que google.script.run n'est pas disponible
     if (isGitHubPages || !hasNativeGAS) {
-        console.log('🌐 Mode démo activé (GitHub Pages / CORS)');
+        console.log('🌐 Mode démo permanent activé (GitHub Pages / CORS)');
         activateDemoMode();
         return;
     }
@@ -3118,7 +2866,8 @@ function supprimerUtilisateurDepuisMenu(email, el) {
   el.style.color = '#facc15';
   
   requireAdmin(function(pin) {
-    google.script.run      .withSuccessHandler(function(res) {
+    google.script.run
+      .withSuccessHandler(function(res) {
         el.textContent = originalText;
         el.style.color = '#f87171';
         if (res && res.success) { showToast('✅ Utilisateur supprimé', 'success'); chargerListeUtilisateurs(); }
@@ -5412,14 +5161,10 @@ function loadDashboardSilent() {
 //  INITIALISATION FINALE - UN SEUL ÉCOUTEUR
 // ============================================================
 
-// ============================================================
-//  INITIALISATION PERMANENTE - AVEC MODE DÉMO
-// ============================================================
-
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📄 DOM chargé');
     
-    // 1. Initialiser les composants standards
+    // Initialiser les composants
     initDarkMode();
     initLanguage();
     reinitialiserCompteurFacture();
@@ -5444,38 +5189,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 2. Vérifier si on est sur GitHub Pages (CORS problématique)
-    const isGitHubPages = window.location.hostname.includes('github.io');
-    const hasNativeGAS = typeof google !== 'undefined' && 
-                         google.script && 
-                         google.script.run &&
-                         typeof google.script.run.withSuccessHandler === 'function';
+    // Lancer le pont
+    initGasBridge();
     
-    // 3. Si on est sur GitHub Pages OU que google.script.run n'est pas disponible
-    if (isGitHubPages || !hasNativeGAS) {
-        console.log('🌐 Mode démo permanent activé (GitHub Pages / CORS)');
-        // Activer le mode démo directement
-        if (typeof activateDemoMode === 'function') {
-            activateDemoMode();
-        } else {
-            // Si la fonction n'existe pas, utiliser le mode démo intégré
-            activatePermanentDemoMode();
-        }
-    } else {
-        console.log('🌐 Mode normal - Google Apps Script disponible');
-        // Lancer le pont normal
-        if (typeof initGasBridge === 'function') {
-            initGasBridge();
-        }
-    }
-    
-    // 4. Gestion du splash screen
+    // Gestion du splash screen
     setTimeout(function() {
         var splash = document.getElementById('splashScreen');
         if (splash) splash.style.display = 'none';
     }, 1000);
     
-    // 5. Navigation et menu
+    // Navigation et menu
     setTimeout(function() {
         if (typeof initNavigation === 'function') {
             initNavigation();
@@ -5494,235 +5217,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 800);
     
+    setTimeout(function() {
+        if (typeof initNavigation === 'function') {
+            initNavigation();
+            initMobileMenu();
+        }
+    }, 3000);
+    
     console.log('✅ Initialisation terminée');
 });
 
-// ============================================================
-//  MODE DÉMO PERMANENT - INTÉGRÉ DIRECTEMENT
-// ============================================================
-
-function activatePermanentDemoMode() {
-    console.log('🔧 Activation du mode démo permanent...');
-    
-    // 1. Créer google.script.run
-    if (typeof google === 'undefined') {
-        window.google = { script: {} };
-    }
-    if (typeof google.script === 'undefined') {
-        google.script = {};
-    }
-    
-    // 2. Données simulées
-    const DEMO_DATA = {
-        totalVerse: 1805000,
-        totalReste: 4195000,
-        associesValides: 5,
-        enAttente: 3,
-        joursRestants: 33,
-        soldeCaisse: -9157000,
-        membres: [
-            { id: 'M0001', nom: 'Rakoto Jean', telephone: '032 12 345 67', statut: 'Associé validé', email: 'rakoto@test.com' },
-            { id: 'M0002', nom: 'Rakotomalala Mirana', telephone: '033 98 765 43', statut: 'Nouveau - à vérifier', email: 'mirana@test.com' },
-            { id: 'M0003', nom: 'Hery Tiana', telephone: '034 56 789 01', statut: 'Associé validé', email: 'hery@test.com' }
-        ],
-        apports: [
-            { idMembre: 'M0001', nom: 'Rakoto Jean', apportPrevu: 1000000, montantVerse: 500000, resteAVerser: 500000, pourcentage: 0.5, statut: 'Partiellement versé', factures: ['NG-2026-00001'] },
-            { idMembre: 'M0002', nom: 'Rakotomalala Mirana', apportPrevu: 1000000, montantVerse: 0, resteAVerser: 1000000, pourcentage: 0, statut: 'Nouveau - à vérifier', factures: [] },
-            { idMembre: 'M0003', nom: 'Hery Tiana', apportPrevu: 1000000, montantVerse: 800000, resteAVerser: 200000, pourcentage: 0.8, statut: 'Partiellement versé', factures: ['NG-2026-00002'] }
-        ],
-        factures: [
-            { row: 2, numFacture: '', nom: 'ANTOINNE', montant: 20000, modePaiement: 'Airtel Money', datePaiement: '12/08/2026', validation: '' },
-            { row: 3, numFacture: 'NG-2026-00001', nom: 'Rakoto Jean', montant: 500000, modePaiement: 'MVola', datePaiement: '10/08/2026', validation: 'VALIDER' }
-        ],
-        finance: {
-            items: [
-                { row: 1, date: '10/08/2026', type: 'Entrée', categorie: 'Apport associé', description: 'Apport Rakoto Jean', entree: 500000, sortie: 0, numFacture: 'NG-2026-00001', enregistrePar: 'Admin' }
-            ],
-            totalEntree: 500000,
-            totalSortie: 0
-        },
-        chartData: {
-            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû'],
-            data: [50000, 75000, 30000, 40000, 60000, 80000, 45000, 65000]
-        }
-    };
-    
-    // 3. Fonctions simulées
-    const demoHandlers = {
-        getDashboardData: function(data, cb) {
-            setTimeout(function() {
-                cb({
-                    totalVerse: DEMO_DATA.totalVerse,
-                    totalReste: DEMO_DATA.totalReste,
-                    associesValides: DEMO_DATA.associesValides,
-                    enAttente: DEMO_DATA.enAttente,
-                    joursRestants: DEMO_DATA.joursRestants,
-                    soldeCaisse: DEMO_DATA.soldeCaisse
-                });
-            }, 200);
-        },
-        getMembres: function(data, cb) {
-            setTimeout(function() { cb(DEMO_DATA.membres); }, 200);
-        },
-        getApportsData: function(data, cb) {
-            setTimeout(function() { cb(DEMO_DATA.apports); }, 200);
-        },
-        getFacturesData: function(data, cb) {
-            setTimeout(function() { cb(DEMO_DATA.factures); }, 200);
-        },
-        getFinanceData: function(data, cb) {
-            setTimeout(function() { cb(DEMO_DATA.finance); }, 200);
-        },
-        getApportsMensuels: function(data, cb) {
-            setTimeout(function() { cb(DEMO_DATA.chartData); }, 200);
-        },
-        getProfilUtilisateur: function(email, cb) {
-            setTimeout(function() {
-                cb({ success: true, nom: 'Admin NG-MADA', email: email || 'admin@ngmada.com', photo: '', dateCreation: '01/09/2026' });
-            }, 200);
-        },
-        getListeUtilisateurs: function(data, cb) {
-            setTimeout(function() {
-                cb([
-                    { nom: 'Admin NG-MADA', email: 'admin@ngmada.com', estEnLigne: true },
-                    { nom: 'Utilisateur Test', email: 'test@ngmada.com', estEnLigne: false }
-                ]);
-            }, 200);
-        },
-        connecterUtilisateur: function(data, cb) {
-            setTimeout(function() {
-                if (data && data.email && data.motDePasse) {
-                    cb({ success: true, token: 'demo_token_' + Date.now(), nom: 'Utilisateur Démo', email: data.email });
-                } else {
-                    cb({ success: false, message: 'Email ou mot de passe incorrect' });
-                }
-            }, 200);
-        },
-        inscrireUtilisateur: function(data, cb) {
-            setTimeout(function() { cb({ success: true }); }, 200);
-        },
-        verifierPin: function(pin, cb) {
-            setTimeout(function() { cb(pin === '1986' || pin === '0000'); }, 200);
-        },
-        saveMembre: function(data, cb) {
-            setTimeout(function() { cb({ success: true, id: 'M' + String(Math.floor(Math.random() * 9999)).padStart(4, '0') }); }, 200);
-        },
-        validerFactureWeb: function(pin, row, numFacture, cb) {
-            setTimeout(function() { cb({ success: true, numFacture: numFacture || 'NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200);
-        },
-        supprimerMembreAvecCascade: function(pin, id, cb) {
-            setTimeout(function() { cb({ success: true, message: 'Membre supprimé avec succès' }); }, 200);
-        },
-        supprimerFactureAvecCascade: function(pin, row, cb) {
-            setTimeout(function() { cb({ success: true, message: 'Facture supprimée avec succès' }); }, 200);
-        },
-        ajouterMouvementFinance: function(pin, infos, cb) {
-            setTimeout(function() { cb({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200);
-        },
-        previsualiserMouvementFinance: function(pin, infos, cb) {
-            setTimeout(function() { cb({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200);
-        },
-        envoyerCarteMembreParEmail: function(pin, id, cb) {
-            setTimeout(function() { cb({ success: true, email: 'membre@test.com' }); }, 200);
-        },
-        envoyerJustificatifParEmail: function(pin, row, cb) {
-            setTimeout(function() { cb({ success: true, email: 'admin@test.com' }); }, 200);
-        },
-        genererNumeroFacture: function(cb) {
-            setTimeout(function() { cb('NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0')); }, 200);
-        },
-        testerConnexion: function(data, cb) {
-            setTimeout(function() { cb({ success: true, message: '✅ Mode démo actif !' }); }, 200);
-        },
-        deconnecterUtilisateur: function(token, cb) {
-            setTimeout(function() { cb({ success: true }); }, 200);
-        },
-        mettreAJourDateConnexion: function(email, cb) {
-            setTimeout(function() { cb({ success: true }); }, 200);
-        }
-    };
-    
-    // 4. Créer le proxy
-    const runObj = {
-        _success: null,
-        _failure: null,
-        withSuccessHandler: function(callback) {
-            this._success = callback;
-            return this;
-        },
-        withFailureHandler: function(callback) {
-            this._failure = callback;
-            return this;
-        }
-    };
-    
-    const handler = {
-        get(target, prop) {
-            if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
-                return target[prop].bind(target);
-            }
-            if (typeof prop === 'string' && !prop.startsWith('_')) {
-                return function(data) {
-                    if (demoHandlers[prop]) {
-                        demoHandlers[prop](data, function(result) {
-                            if (target._success) target._success(result);
-                        });
-                    } else {
-                        console.warn('⚠️ Méthode non simulée:', prop);
-                        if (target._failure) target._failure(new Error('Méthode inconnue: ' + prop));
-                    }
-                    return target;
-                };
-            }
-            return target[prop];
-        }
-    };
-    
-    google.script.run = new Proxy(runObj, handler);
-    console.log('✅ Proxy démo permanent activé !');
-    
-    // 5. Forcer l'affichage
-    var loginGate = document.getElementById('loginGate');
-    if (loginGate) loginGate.style.display = 'none';
-    
-    var appShell = document.getElementById('appShell');
-    if (appShell) appShell.style.display = 'block';
-    
-    document.getElementById('utilisateurNom').textContent = 'Admin';
-    document.getElementById('userNameDisplay').textContent = 'Admin';
-    
-    // 6. Charger les données
-    loadedTabs = {};
-    if (typeof loadDashboard === 'function') {
-        loadDashboard();
-    }
-    
-    setTimeout(function() {
-        if (typeof loadMembres === 'function') {
-            loadMembres();
-        }
-    }, 300);
-    
-    setTimeout(function() {
-        if (typeof loadApports === 'function') {
-            loadApports();
-        }
-    }, 600);
-    
-    setTimeout(function() {
-        if (typeof loadFactures === 'function') {
-            loadFactures();
-        }
-    }, 900);
-    
-    setTimeout(function() {
-        if (typeof loadCaisse === 'function') {
-            loadCaisse();
-        }
-    }, 1200);
-    
-    console.log('✅ Mode démo permanent activé avec succès !');
-}
 console.log('✅ Toutes les fonctions sont chargées');
 </script>
 
