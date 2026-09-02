@@ -2283,7 +2283,7 @@ body.dark-mode .btn-save:hover {
 <script>
 // ============================================================
 //  SCRIPT NG-MADA - VERSION FINALE COMPLÈTE
-//  AVEC SYNCHRONISATION COMPLÈTE ET PROXY CORRIGÉ
+//  AVEC SYNCHRONISATION COMPLÈTE ET MODE DÉMO
 // ============================================================
 
 console.log('🚀 Script NG-MADA chargé');
@@ -2411,6 +2411,7 @@ function testFetch() {
         alert('❌ Erreur fetch:\n' + (err.message || err));
     });
 }
+
 // ============================================================
 //  MODE DÉMO - DONNÉES SIMULÉES (POUR GITHUB PAGES)
 // ============================================================
@@ -2418,7 +2419,7 @@ function testFetch() {
 function activateDemoMode() {
     console.log('🔧 Activation du mode démo...');
     
-    // Créer google.script.run avec des données simulées
+    // Créer google.script.run si inexistant
     if (typeof google === 'undefined') {
         window.google = { script: {} };
     }
@@ -2428,7 +2429,6 @@ function activateDemoMode() {
     
     // Données simulées
     const demoData = {
-        // Dashboard
         getDashboardData: function(data, callback) {
             setTimeout(function() {
                 callback({
@@ -2441,8 +2441,6 @@ function activateDemoMode() {
                 });
             }, 300);
         },
-        
-        // Membres
         getMembres: function(data, callback) {
             setTimeout(function() {
                 callback([
@@ -2452,8 +2450,6 @@ function activateDemoMode() {
                 ]);
             }, 300);
         },
-        
-        // Apports
         getApportsData: function(data, callback) {
             setTimeout(function() {
                 callback([
@@ -2463,8 +2459,6 @@ function activateDemoMode() {
                 ]);
             }, 300);
         },
-        
-        // Factures
         getFacturesData: function(data, callback) {
             setTimeout(function() {
                 callback([
@@ -2473,8 +2467,6 @@ function activateDemoMode() {
                 ]);
             }, 300);
         },
-        
-        // Finance (Caisse)
         getFinanceData: function(data, callback) {
             setTimeout(function() {
                 callback({
@@ -2486,8 +2478,6 @@ function activateDemoMode() {
                 });
             }, 300);
         },
-        
-        // Apports mensuels (graphique)
         getApportsMensuels: function(data, callback) {
             setTimeout(function() {
                 callback({
@@ -2496,8 +2486,6 @@ function activateDemoMode() {
                 });
             }, 300);
         },
-        
-        // Profil utilisateur
         getProfilUtilisateur: function(email, callback) {
             setTimeout(function() {
                 callback({
@@ -2509,8 +2497,6 @@ function activateDemoMode() {
                 });
             }, 300);
         },
-        
-        // Liste utilisateurs
         getListeUtilisateurs: function(data, callback) {
             setTimeout(function() {
                 callback([
@@ -2519,119 +2505,102 @@ function activateDemoMode() {
                 ]);
             }, 300);
         },
-        
-        // Connexion
         connecterUtilisateur: function(data, callback) {
             setTimeout(function() {
-                if (data.email && data.motDePasse) {
+                if (data && data.email && data.motDePasse) {
                     callback({ success: true, token: 'demo_token_' + Date.now(), nom: 'Utilisateur Démo', email: data.email });
                 } else {
                     callback({ success: false, message: 'Email ou mot de passe incorrect' });
                 }
             }, 300);
         },
-        
-        // Inscription
         inscrireUtilisateur: function(data, callback) {
             setTimeout(function() {
                 callback({ success: true });
             }, 300);
         },
-        
-        // Vérification PIN
         verifierPin: function(pin, callback) {
             setTimeout(function() {
                 callback(pin === '1986' || pin === '0000');
             }, 300);
         },
-        
-        // Sauvegarde membre
         saveMembre: function(data, callback) {
             setTimeout(function() {
                 callback({ success: true, id: 'M' + String(Math.floor(Math.random() * 9999)).padStart(4, '0') });
             }, 300);
         },
-        
-        // Validation facture
         validerFactureWeb: function(pin, row, numFacture, callback) {
             setTimeout(function() {
                 callback({ success: true, numFacture: numFacture || 'NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') });
             }, 300);
         },
-        
-        // Suppression membre en cascade
         supprimerMembreAvecCascade: function(pin, id, callback) {
             setTimeout(function() {
                 callback({ success: true, message: 'Membre supprimé avec succès' });
             }, 300);
         },
-        
-        // Suppression facture en cascade
         supprimerFactureAvecCascade: function(pin, row, callback) {
             setTimeout(function() {
                 callback({ success: true, message: 'Facture supprimée avec succès' });
             }, 300);
         },
-        
-        // Ajout mouvement finance
         ajouterMouvementFinance: function(pin, infos, callback) {
             setTimeout(function() {
                 callback({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') });
             }, 300);
         },
-        
-        // Prévisualisation mouvement finance
         previsualiserMouvementFinance: function(pin, infos, callback) {
             setTimeout(function() {
                 callback({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') });
             }, 300);
         },
-        
-        // Envoi carte membre
         envoyerCarteMembreParEmail: function(pin, id, callback) {
             setTimeout(function() {
                 callback({ success: true, email: 'membre@test.com' });
             }, 300);
         },
-        
-        // Envoi justificatif
         envoyerJustificatifParEmail: function(pin, row, callback) {
             setTimeout(function() {
                 callback({ success: true, email: 'admin@test.com' });
             }, 300);
         },
-        
-        // Génération numéro facture
         genererNumeroFacture: function(callback) {
             setTimeout(function() {
                 callback('NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0'));
             }, 300);
         },
-        
-        // Test connexion
         testerConnexion: function(data, callback) {
             setTimeout(function() {
                 callback({ success: true, message: '✅ Mode démo actif !' });
             }, 300);
         },
-        
-        // Déconnexion
         deconnecterUtilisateur: function(token, callback) {
             setTimeout(function() {
                 callback({ success: true });
             }, 300);
         },
-        
-        // Mettre à jour date connexion
         mettreAJourDateConnexion: function(email, callback) {
             setTimeout(function() {
                 callback({ success: true });
             }, 300);
+        },
+        afficherApp: function(nom) {
+            console.log('✅ Mode démo - Affichage de l\'application');
+            var loginGate = document.getElementById('loginGate');
+            var appShell = document.getElementById('appShell');
+            if (loginGate) loginGate.style.display = 'none';
+            if (appShell) appShell.style.display = 'block';
+            document.getElementById('utilisateurNom').textContent = nom || 'Admin';
+            document.getElementById('userNameDisplay').textContent = nom || 'Admin';
+            if (!loadedTabs['dashboard']) {
+                loadedTabs['dashboard'] = true;
+                loadDashboard();
+            }
         }
     };
     
-    // Créer le proxy
-    google.script.run = {
+    // Créer l'objet de base
+    const runObj = {
         _success: null,
         _failure: null,
         
@@ -2645,7 +2614,7 @@ function activateDemoMode() {
         }
     };
     
-    // Proxy pour capturer les appels
+    // Ajouter toutes les méthodes dynamiquement
     const handler = {
         get(target, prop) {
             if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
@@ -2658,6 +2627,7 @@ function activateDemoMode() {
                             if (target._success) target._success(result);
                         });
                     } else {
+                        console.warn('⚠️ Méthode non simulée:', prop);
                         if (target._failure) target._failure(new Error('Méthode inconnue: ' + prop));
                     }
                     return target;
@@ -2667,40 +2637,47 @@ function activateDemoMode() {
         }
     };
     
-    google.script.run = new Proxy(google.script.run, handler);
+    google.script.run = new Proxy(runObj, handler);
     
     console.log('✅ Mode démo activé avec données simulées !');
     console.log('📊 L\'application fonctionne maintenant localement.');
+    
+    // Forcer l'affichage de l'application
+    if (typeof demoData.afficherApp === 'function') {
+        demoData.afficherApp('Admin');
+    }
     
     // Recharger l'interface
     loadedTabs = {};
     
     setTimeout(function() {
-        loadDashboard();
-        console.log('🔄 Interface rechargée avec données de démonstration');
+        if (typeof loadDashboard === 'function') {
+            loadDashboard();
+            console.log('🔄 Interface rechargée avec données de démonstration');
+        }
     }, 500);
 }
 
-// Appeler le mode démo après l'initialisation
-function startWithDemoMode() {
-    console.log('🚀 Démarrage en mode démo...');
-    activateDemoMode();
-}
-
-// Remplacer initGasBridge pour forcer le mode démo
-// (Garder la fonction pour compatibilité mais rediriger vers demo)
-var originalInitGasBridge = initGasBridge;
-initGasBridge = function() {
-    console.log('🌐 Mode démo activé (GitHub Pages)');
-    startWithDemoMode();
-};
-
 // ============================================================
-//  INITIALISATION DU PONT
+//  INITIALISATION DU PONT - VERSION UNIQUE
 // ============================================================
 
 function initGasBridge() {
-    console.log('🌐 Initialisation du pont GAS...');
+    // Vérifier si on est sur GitHub Pages (CORS problématique)
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    const hasNativeGAS = typeof google !== 'undefined' && 
+                         google.script && 
+                         google.script.run &&
+                         typeof google.script.run.withSuccessHandler === 'function';
+    
+    // Si on est sur GitHub Pages ou que google.script.run n'est pas disponible
+    if (isGitHubPages || !hasNativeGAS) {
+        console.log('🌐 Mode démo activé (GitHub Pages / CORS)');
+        activateDemoMode();
+        return;
+    }
+    
+    console.log('🌐 Initialisation du pont GAS natif...');
     
     if (typeof google === 'undefined') {
         window.google = { script: {} };
@@ -2715,14 +2692,11 @@ function initGasBridge() {
     
     setTimeout(function() {
         console.log('🔄 Test automatique...');
-        testConnection();
+        if (typeof testConnection === 'function') {
+            testConnection();
+        }
     }, 1500);
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('📄 DOM chargé');
-    initGasBridge();
-});
 
 // ============================================================
 //  VARIABLES GLOBALES
@@ -3145,8 +3119,7 @@ function supprimerUtilisateurDepuisMenu(email, el) {
   el.style.color = '#facc15';
   
   requireAdmin(function(pin) {
-    google.script.run
-      .withSuccessHandler(function(res) {
+    google.script.run      .withSuccessHandler(function(res) {
         el.textContent = originalText;
         el.style.color = '#f87171';
         if (res && res.success) { showToast('✅ Utilisateur supprimé', 'success'); chargerListeUtilisateurs(); }
@@ -5437,61 +5410,63 @@ function loadDashboardSilent() {
 }
 
 // ============================================================
-//  INITIALISATION FINALE
+//  INITIALISATION FINALE - UN SEUL ÉCOUTEUR
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('📄 DOM chargé');
-  
-  initDarkMode();
-  initLanguage();
-  reinitialiserCompteurFacture();
-  
-  var accent = localStorage.getItem('ngmada_accent');
-  if (accent) {
-    document.documentElement.style.setProperty('--gold', accent);
-    document.documentElement.style.setProperty('--nav-active', accent);
-  }
-  
-  var langue = localStorage.getItem('ngmada_langue') || 'fr';
-  var selectLangue = document.getElementById('selectLangue');
-  if (selectLangue) selectLangue.value = langue;
-  
-  var headerAvatar = document.getElementById('headerUserAvatar');
-  if (headerAvatar) {
-    headerAvatar.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      ouvrirMenuDepuisAvatar();
-    });
-  }
-  
-  var token = sessionStorage.getItem(STOCKAGE_TOKEN) || localStorage.getItem(STOCKAGE_TOKEN);
-  var login = document.getElementById('loginGate');
-  var app = document.getElementById('appShell');
-  
-  if (token) {
-    sessionToken = token;
-    verifierSessionExistante(token);
-  } else {
-    if (login) login.style.display = 'flex';
-    if (app) app.style.display = 'none';
-  }
-  
-  setTimeout(function() { var splash = document.getElementById('splashScreen'); if (splash) splash.style.display = 'none'; }, 1000);
-  setTimeout(function() {
-    initNavigation();
-    initMobileMenu();
-    initMenuNav();
-    initAvatarMenu();
-    updateMenuContent();
-  }, 800);
-  
-  setTimeout(function() {
-    if (typeof initNavigation === 'function') { initNavigation(); initMobileMenu(); }
-  }, 3000);
-  
-  console.log('✅ Initialisation terminée');
+    console.log('📄 DOM chargé');
+    
+    // Initialiser les composants
+    initDarkMode();
+    initLanguage();
+    reinitialiserCompteurFacture();
+    
+    var accent = localStorage.getItem('ngmada_accent');
+    if (accent) {
+        document.documentElement.style.setProperty('--gold', accent);
+        document.documentElement.style.setProperty('--nav-active', accent);
+    }
+    
+    var selectLangue = document.getElementById('selectLangue');
+    if (selectLangue) {
+        selectLangue.value = localStorage.getItem('ngmada_langue') || 'fr';
+    }
+    
+    var headerAvatar = document.getElementById('headerUserAvatar');
+    if (headerAvatar) {
+        headerAvatar.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            ouvrirMenuDepuisAvatar();
+        });
+    }
+    
+    // Lancer le pont
+    initGasBridge();
+    
+    // Gestion du splash screen
+    setTimeout(function() {
+        var splash = document.getElementById('splashScreen');
+        if (splash) splash.style.display = 'none';
+    }, 1000);
+    
+    // Navigation et menu
+    setTimeout(function() {
+        initNavigation();
+        initMobileMenu();
+        initMenuNav();
+        initAvatarMenu();
+        updateMenuContent();
+    }, 800);
+    
+    setTimeout(function() {
+        if (typeof initNavigation === 'function') {
+            initNavigation();
+            initMobileMenu();
+        }
+    }, 3000);
+    
+    console.log('✅ Initialisation terminée');
 });
 
 console.log('✅ Toutes les fonctions sont chargées');
