@@ -2291,7 +2291,6 @@ console.log('🚀 Script NG-MADA chargé');
 // ============================================================
 //  PONT POUR APK/PWA - CONNEXION À GOOGLE APPS SCRIPT
 // ============================================================
-
 // 🔴 REMPLACEZ PAR VOTRE URL GAS 🔴
 const GAS_CONFIG = {
     url: 'https://script.google.com/macros/s/AKfycbzu3LlRkWRi6JrjBFpvHM_oJVWUUGnl7WvxhxcGOvZrX0-JLHkt9XxN5W-TayArg35a3w/exec'
@@ -5413,10 +5412,14 @@ function loadDashboardSilent() {
 //  INITIALISATION FINALE - UN SEUL ÉCOUTEUR
 // ============================================================
 
+// ============================================================
+//  INITIALISATION PERMANENTE - AVEC MODE DÉMO
+// ============================================================
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📄 DOM chargé');
     
-    // Initialiser les composants
+    // 1. Initialiser les composants standards
     initDarkMode();
     initLanguage();
     reinitialiserCompteurFacture();
@@ -5441,34 +5444,285 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Lancer le pont
-    initGasBridge();
+    // 2. Vérifier si on est sur GitHub Pages (CORS problématique)
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    const hasNativeGAS = typeof google !== 'undefined' && 
+                         google.script && 
+                         google.script.run &&
+                         typeof google.script.run.withSuccessHandler === 'function';
     
-    // Gestion du splash screen
+    // 3. Si on est sur GitHub Pages OU que google.script.run n'est pas disponible
+    if (isGitHubPages || !hasNativeGAS) {
+        console.log('🌐 Mode démo permanent activé (GitHub Pages / CORS)');
+        // Activer le mode démo directement
+        if (typeof activateDemoMode === 'function') {
+            activateDemoMode();
+        } else {
+            // Si la fonction n'existe pas, utiliser le mode démo intégré
+            activatePermanentDemoMode();
+        }
+    } else {
+        console.log('🌐 Mode normal - Google Apps Script disponible');
+        // Lancer le pont normal
+        if (typeof initGasBridge === 'function') {
+            initGasBridge();
+        }
+    }
+    
+    // 4. Gestion du splash screen
     setTimeout(function() {
         var splash = document.getElementById('splashScreen');
         if (splash) splash.style.display = 'none';
     }, 1000);
     
-    // Navigation et menu
-    setTimeout(function() {
-        initNavigation();
-        initMobileMenu();
-        initMenuNav();
-        initAvatarMenu();
-        updateMenuContent();
-    }, 800);
-    
+    // 5. Navigation et menu
     setTimeout(function() {
         if (typeof initNavigation === 'function') {
             initNavigation();
+        }
+        if (typeof initMobileMenu === 'function') {
             initMobileMenu();
         }
-    }, 3000);
+        if (typeof initMenuNav === 'function') {
+            initMenuNav();
+        }
+        if (typeof initAvatarMenu === 'function') {
+            initAvatarMenu();
+        }
+        if (typeof updateMenuContent === 'function') {
+            updateMenuContent();
+        }
+    }, 800);
     
     console.log('✅ Initialisation terminée');
 });
 
+// ============================================================
+//  MODE DÉMO PERMANENT - INTÉGRÉ DIRECTEMENT
+// ============================================================
+
+function activatePermanentDemoMode() {
+    console.log('🔧 Activation du mode démo permanent...');
+    
+    // 1. Créer google.script.run
+    if (typeof google === 'undefined') {
+        window.google = { script: {} };
+    }
+    if (typeof google.script === 'undefined') {
+        google.script = {};
+    }
+    
+    // 2. Données simulées
+    const DEMO_DATA = {
+        totalVerse: 1805000,
+        totalReste: 4195000,
+        associesValides: 5,
+        enAttente: 3,
+        joursRestants: 33,
+        soldeCaisse: -9157000,
+        membres: [
+            { id: 'M0001', nom: 'Rakoto Jean', telephone: '032 12 345 67', statut: 'Associé validé', email: 'rakoto@test.com' },
+            { id: 'M0002', nom: 'Rakotomalala Mirana', telephone: '033 98 765 43', statut: 'Nouveau - à vérifier', email: 'mirana@test.com' },
+            { id: 'M0003', nom: 'Hery Tiana', telephone: '034 56 789 01', statut: 'Associé validé', email: 'hery@test.com' }
+        ],
+        apports: [
+            { idMembre: 'M0001', nom: 'Rakoto Jean', apportPrevu: 1000000, montantVerse: 500000, resteAVerser: 500000, pourcentage: 0.5, statut: 'Partiellement versé', factures: ['NG-2026-00001'] },
+            { idMembre: 'M0002', nom: 'Rakotomalala Mirana', apportPrevu: 1000000, montantVerse: 0, resteAVerser: 1000000, pourcentage: 0, statut: 'Nouveau - à vérifier', factures: [] },
+            { idMembre: 'M0003', nom: 'Hery Tiana', apportPrevu: 1000000, montantVerse: 800000, resteAVerser: 200000, pourcentage: 0.8, statut: 'Partiellement versé', factures: ['NG-2026-00002'] }
+        ],
+        factures: [
+            { row: 2, numFacture: '', nom: 'ANTOINNE', montant: 20000, modePaiement: 'Airtel Money', datePaiement: '12/08/2026', validation: '' },
+            { row: 3, numFacture: 'NG-2026-00001', nom: 'Rakoto Jean', montant: 500000, modePaiement: 'MVola', datePaiement: '10/08/2026', validation: 'VALIDER' }
+        ],
+        finance: {
+            items: [
+                { row: 1, date: '10/08/2026', type: 'Entrée', categorie: 'Apport associé', description: 'Apport Rakoto Jean', entree: 500000, sortie: 0, numFacture: 'NG-2026-00001', enregistrePar: 'Admin' }
+            ],
+            totalEntree: 500000,
+            totalSortie: 0
+        },
+        chartData: {
+            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû'],
+            data: [50000, 75000, 30000, 40000, 60000, 80000, 45000, 65000]
+        }
+    };
+    
+    // 3. Fonctions simulées
+    const demoHandlers = {
+        getDashboardData: function(data, cb) {
+            setTimeout(function() {
+                cb({
+                    totalVerse: DEMO_DATA.totalVerse,
+                    totalReste: DEMO_DATA.totalReste,
+                    associesValides: DEMO_DATA.associesValides,
+                    enAttente: DEMO_DATA.enAttente,
+                    joursRestants: DEMO_DATA.joursRestants,
+                    soldeCaisse: DEMO_DATA.soldeCaisse
+                });
+            }, 200);
+        },
+        getMembres: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.membres); }, 200);
+        },
+        getApportsData: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.apports); }, 200);
+        },
+        getFacturesData: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.factures); }, 200);
+        },
+        getFinanceData: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.finance); }, 200);
+        },
+        getApportsMensuels: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.chartData); }, 200);
+        },
+        getProfilUtilisateur: function(email, cb) {
+            setTimeout(function() {
+                cb({ success: true, nom: 'Admin NG-MADA', email: email || 'admin@ngmada.com', photo: '', dateCreation: '01/09/2026' });
+            }, 200);
+        },
+        getListeUtilisateurs: function(data, cb) {
+            setTimeout(function() {
+                cb([
+                    { nom: 'Admin NG-MADA', email: 'admin@ngmada.com', estEnLigne: true },
+                    { nom: 'Utilisateur Test', email: 'test@ngmada.com', estEnLigne: false }
+                ]);
+            }, 200);
+        },
+        connecterUtilisateur: function(data, cb) {
+            setTimeout(function() {
+                if (data && data.email && data.motDePasse) {
+                    cb({ success: true, token: 'demo_token_' + Date.now(), nom: 'Utilisateur Démo', email: data.email });
+                } else {
+                    cb({ success: false, message: 'Email ou mot de passe incorrect' });
+                }
+            }, 200);
+        },
+        inscrireUtilisateur: function(data, cb) {
+            setTimeout(function() { cb({ success: true }); }, 200);
+        },
+        verifierPin: function(pin, cb) {
+            setTimeout(function() { cb(pin === '1986' || pin === '0000'); }, 200);
+        },
+        saveMembre: function(data, cb) {
+            setTimeout(function() { cb({ success: true, id: 'M' + String(Math.floor(Math.random() * 9999)).padStart(4, '0') }); }, 200);
+        },
+        validerFactureWeb: function(pin, row, numFacture, cb) {
+            setTimeout(function() { cb({ success: true, numFacture: numFacture || 'NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200);
+        },
+        supprimerMembreAvecCascade: function(pin, id, cb) {
+            setTimeout(function() { cb({ success: true, message: 'Membre supprimé avec succès' }); }, 200);
+        },
+        supprimerFactureAvecCascade: function(pin, row, cb) {
+            setTimeout(function() { cb({ success: true, message: 'Facture supprimée avec succès' }); }, 200);
+        },
+        ajouterMouvementFinance: function(pin, infos, cb) {
+            setTimeout(function() { cb({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200);
+        },
+        previsualiserMouvementFinance: function(pin, infos, cb) {
+            setTimeout(function() { cb({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200);
+        },
+        envoyerCarteMembreParEmail: function(pin, id, cb) {
+            setTimeout(function() { cb({ success: true, email: 'membre@test.com' }); }, 200);
+        },
+        envoyerJustificatifParEmail: function(pin, row, cb) {
+            setTimeout(function() { cb({ success: true, email: 'admin@test.com' }); }, 200);
+        },
+        genererNumeroFacture: function(cb) {
+            setTimeout(function() { cb('NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0')); }, 200);
+        },
+        testerConnexion: function(data, cb) {
+            setTimeout(function() { cb({ success: true, message: '✅ Mode démo actif !' }); }, 200);
+        },
+        deconnecterUtilisateur: function(token, cb) {
+            setTimeout(function() { cb({ success: true }); }, 200);
+        },
+        mettreAJourDateConnexion: function(email, cb) {
+            setTimeout(function() { cb({ success: true }); }, 200);
+        }
+    };
+    
+    // 4. Créer le proxy
+    const runObj = {
+        _success: null,
+        _failure: null,
+        withSuccessHandler: function(callback) {
+            this._success = callback;
+            return this;
+        },
+        withFailureHandler: function(callback) {
+            this._failure = callback;
+            return this;
+        }
+    };
+    
+    const handler = {
+        get(target, prop) {
+            if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
+                return target[prop].bind(target);
+            }
+            if (typeof prop === 'string' && !prop.startsWith('_')) {
+                return function(data) {
+                    if (demoHandlers[prop]) {
+                        demoHandlers[prop](data, function(result) {
+                            if (target._success) target._success(result);
+                        });
+                    } else {
+                        console.warn('⚠️ Méthode non simulée:', prop);
+                        if (target._failure) target._failure(new Error('Méthode inconnue: ' + prop));
+                    }
+                    return target;
+                };
+            }
+            return target[prop];
+        }
+    };
+    
+    google.script.run = new Proxy(runObj, handler);
+    console.log('✅ Proxy démo permanent activé !');
+    
+    // 5. Forcer l'affichage
+    var loginGate = document.getElementById('loginGate');
+    if (loginGate) loginGate.style.display = 'none';
+    
+    var appShell = document.getElementById('appShell');
+    if (appShell) appShell.style.display = 'block';
+    
+    document.getElementById('utilisateurNom').textContent = 'Admin';
+    document.getElementById('userNameDisplay').textContent = 'Admin';
+    
+    // 6. Charger les données
+    loadedTabs = {};
+    if (typeof loadDashboard === 'function') {
+        loadDashboard();
+    }
+    
+    setTimeout(function() {
+        if (typeof loadMembres === 'function') {
+            loadMembres();
+        }
+    }, 300);
+    
+    setTimeout(function() {
+        if (typeof loadApports === 'function') {
+            loadApports();
+        }
+    }, 600);
+    
+    setTimeout(function() {
+        if (typeof loadFactures === 'function') {
+            loadFactures();
+        }
+    }, 900);
+    
+    setTimeout(function() {
+        if (typeof loadCaisse === 'function') {
+            loadCaisse();
+        }
+    }, 1200);
+    
+    console.log('✅ Mode démo permanent activé avec succès !');
+}
 console.log('✅ Toutes les fonctions sont chargées');
 </script>
 
