@@ -2417,13 +2417,12 @@ function activateDemoMode() {
     };
     
     google.script.run = new Proxy(runObj, handler);
-      console.log('✅ Proxy démo permanent activé !');
+    console.log('✅ Proxy démo permanent activé !');
     
-    // 🔥 UN SEUL BLOC POUR LE CHARGEMENT DES DONNÉES
+    // 🔥 FORCER L'AFFICHAGE APRÈS ACTIVATION (SANS RÉINITIALISER loadedTabs)
     setTimeout(function() {
         console.log('🔄 Chargement des données démo...');
         
-        // Forcer l'affichage
         var loginGate = document.getElementById('loginGate');
         if (loginGate) {
             loginGate.style.display = 'none';
@@ -2439,7 +2438,6 @@ function activateDemoMode() {
             splash.style.display = 'none';
         }
         
-        // Forcer le nom d'utilisateur
         var userNom = document.getElementById('utilisateurNom');
         if (userNom) {
             userNom.textContent = 'Admin';
@@ -2449,34 +2447,39 @@ function activateDemoMode() {
             userNameDisplay.textContent = 'Admin';
         }
         
-        // Charger les données des onglets UNE SEULE FOIS
-        loadedTabs = {};
+        // 🔥 NE PAS RÉINITIALISER loadedTabs !
+        // loadedTabs = {};  // <-- SUPPRIMER CETTE LIGNE
         
-        if (typeof loadDashboard === 'function') {
+        // Charger les données UNE SEULE FOIS
+        if (typeof loadDashboard === 'function' && !loadedTabs['dashboard']) {
             loadedTabs['dashboard'] = true;
             loadDashboard();
         }
         
         setTimeout(function() {
-            if (typeof loadMembres === 'function') {
+            if (typeof loadMembres === 'function' && !loadedTabs['membres']) {
+                loadedTabs['membres'] = true;
                 loadMembres();
             }
         }, 400);
         
         setTimeout(function() {
-            if (typeof loadApports === 'function') {
+            if (typeof loadApports === 'function' && !loadedTabs['apports']) {
+                loadedTabs['apports'] = true;
                 loadApports();
             }
         }, 800);
         
         setTimeout(function() {
-            if (typeof loadFactures === 'function') {
+            if (typeof loadFactures === 'function' && !loadedTabs['factures']) {
+                loadedTabs['factures'] = true;
                 loadFactures();
             }
         }, 1200);
         
         setTimeout(function() {
-            if (typeof loadCaisse === 'function') {
+            if (typeof loadCaisse === 'function' && !loadedTabs['caisse']) {
+                loadedTabs['caisse'] = true;
                 loadCaisse();
             }
         }, 1600);
@@ -2484,7 +2487,6 @@ function activateDemoMode() {
         console.log('✅ Mode démo permanent activé avec succès !');
     }, 300);
 }
-
 // ============================================================
 //  INITIALISATION DU PONT
 // ============================================================
@@ -3401,48 +3403,46 @@ function afficherStatsDashboard(d) {
 // ============================================================
 
 function initNavigation() {
-  document.querySelectorAll('.nav-item').forEach(function(btn) {
-    var newBtn = btn.cloneNode(true);
-    btn.parentNode.replaceChild(newBtn, btn);
-  });
-  
-  document.querySelectorAll('.nav-item').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      var tab = this.dataset.tab;
-      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      document.querySelectorAll('.view').forEach(v => { v.classList.remove('active'); v.style.display = 'none'; });
-      var targetView = document.getElementById('view-' + tab);
-      if (targetView) { targetView.classList.add('active'); targetView.style.display = 'block'; }
-      
-      if (!loadedTabs[tab]) {
-        loadedTabs[tab] = true;
-        if (tab === 'dashboard') loadDashboard();
-        else if (tab === 'membres') loadMembres();
-        else if (tab === 'apports') loadApports();
-        else if (tab === 'caisse') { loadCaisse(); appliquerVerrouCaisse(); }
-        else if (tab === 'factures') loadFactures();
-      }
-      if (tab === 'caisse') appliquerVerrouCaisse();
-      
-      setTimeout(function() { updateFabsVisibility(tab); }, 100);
+    document.querySelectorAll('.nav-item').forEach(function(btn) {
+        var newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
     });
-  });
-  
-  var firstActive = document.querySelector('.nav-item.active');
-  if (!firstActive) {
-    var firstNav = document.querySelector('.nav-item');
-    if (firstNav) {
-      firstNav.classList.add('active');
-      var firstTab = firstNav.dataset.tab;
-      var firstView = document.getElementById('view-' + firstTab);
-      if (firstView) { firstView.classList.add('active'); firstView.style.display = 'block'; }
-      setTimeout(function() { updateFabsVisibility(firstTab); }, 200);
-    }
-  }
+    
+    document.querySelectorAll('.nav-item').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var tab = this.dataset.tab;
+            
+            document.querySelectorAll('.nav-item').forEach(function(b) {
+                b.classList.remove('active');
+            });
+            this.classList.add('active');
+            
+            document.querySelectorAll('.view').forEach(function(v) {
+                v.classList.remove('active');
+                v.style.display = 'none';
+            });
+            var targetView = document.getElementById('view-' + tab);
+            if (targetView) {
+                targetView.classList.add('active');
+                targetView.style.display = 'block';
+            }
+            
+            // 🔥 NE CHARGER QUE SI PAS DÉJÀ CHARGÉ
+            if (!loadedTabs[tab]) {
+                loadedTabs[tab] = true;
+                if (tab === 'dashboard') loadDashboard();
+                else if (tab === 'membres') loadMembres();
+                else if (tab === 'apports') loadApports();
+                else if (tab === 'caisse') { loadCaisse(); appliquerVerrouCaisse(); }
+                else if (tab === 'factures') loadFactures();
+            }
+            
+            if (tab === 'caisse') appliquerVerrouCaisse();
+            setTimeout(function() { updateFabsVisibility(tab); }, 100);
+        });
+    });
 }
-
 // ============================================================
 //  MEMBRES
 // ============================================================
