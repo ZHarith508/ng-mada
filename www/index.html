@@ -2276,7 +2276,8 @@ function activateDemoMode() {
                     associesValides: DEMO_DATA.associesValides,
                     enAttente: DEMO_DATA.enAttente,
                     joursRestants: DEMO_DATA.joursRestants,
-                    soldeCaisse: DEMO_DATA.soldeCaisse
+                    soldeCaisse: DEMO_DATA.soldeCaisse,
+                    nombreApports: DEMO_DATA.apports.length
                 });
             }, 200);
         },
@@ -2399,47 +2400,68 @@ function activateDemoMode() {
     google.script.run = new Proxy(runObj, handler);
     console.log('✅ Proxy démo permanent activé !');
     
-    // Forcer l'affichage
-    var loginGate = document.getElementById('loginGate');
-    if (loginGate) loginGate.style.display = 'none';
-    
-    var appShell = document.getElementById('appShell');
-    if (appShell) appShell.style.display = 'block';
-    
-    document.getElementById('utilisateurNom').textContent = 'Admin';
-    document.getElementById('userNameDisplay').textContent = 'Admin';
-    
-    // Charger les données
-    loadedTabs = {};
-    if (typeof loadDashboard === 'function') {
-        loadDashboard();
-    }
-    
+    // 🔥 FORCER L'AFFICHAGE APRÈS ACTIVATION
     setTimeout(function() {
-        if (typeof loadMembres === 'function') {
-            loadMembres();
+        var loginGate = document.getElementById('loginGate');
+        if (loginGate) {
+            loginGate.style.display = 'none';
         }
-    }, 300);
-    
-    setTimeout(function() {
-        if (typeof loadApports === 'function') {
-            loadApports();
+        
+        var appShell = document.getElementById('appShell');
+        if (appShell) {
+            appShell.style.display = 'block';
         }
-    }, 600);
-    
-    setTimeout(function() {
-        if (typeof loadFactures === 'function') {
-            loadFactures();
+        
+        var splash = document.getElementById('splashScreen');
+        if (splash) {
+            splash.style.display = 'none';
         }
-    }, 900);
-    
-    setTimeout(function() {
-        if (typeof loadCaisse === 'function') {
-            loadCaisse();
+        
+        // Forcer le nom d'utilisateur
+        var userNom = document.getElementById('utilisateurNom');
+        if (userNom) {
+            userNom.textContent = 'Admin';
         }
-    }, 1200);
-    
-    console.log('✅ Mode démo permanent activé avec succès !');
+        var userNameDisplay = document.getElementById('userNameDisplay');
+        if (userNameDisplay) {
+            userNameDisplay.textContent = 'Admin';
+        }
+        
+        // Réinitialiser les onglets chargés
+        loadedTabs = {};
+        
+        // Charger les données des onglets
+        if (typeof loadDashboard === 'function') {
+            loadedTabs['dashboard'] = true;
+            loadDashboard();
+        }
+        
+        setTimeout(function() {
+            if (typeof loadMembres === 'function') {
+                loadMembres();
+            }
+        }, 300);
+        
+        setTimeout(function() {
+            if (typeof loadApports === 'function') {
+                loadApports();
+            }
+        }, 600);
+        
+        setTimeout(function() {
+            if (typeof loadFactures === 'function') {
+                loadFactures();
+            }
+        }, 900);
+        
+        setTimeout(function() {
+            if (typeof loadCaisse === 'function') {
+                loadCaisse();
+            }
+        }, 1200);
+        
+        console.log('✅ Mode démo permanent activé avec succès !');
+    }, 500);
 }
 
 // ============================================================
