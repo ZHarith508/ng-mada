@@ -7,6 +7,18 @@
   "background_color": "#0f172a",
   "theme_color": "#facc15",
   "orientation": "portrait",
+  "id": "ng-mada-app",
+  "scope": "./",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["business", "finance"],
+  "screenshots": [
+    {
+      "src": "https://drive.google.com/thumbnail?id=1oLTjgg8v_wpNw_1izzaVxPK9SM3XpmG-&sz=w192",
+      "sizes": "1080x1920",
+      "type": "image/png"
+    }
+  ],
   "icons": [
     {
       "src": "https://drive.google.com/thumbnail?id=1oLTjgg8v_wpNw_1izzaVxPK9SM3XpmG-&sz=w192",
@@ -19,6 +31,32 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Voir le tableau de bord",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "https://drive.google.com/thumbnail?id=1oLTjgg8v_wpNw_1izzaVxPK9SM3XpmG-&sz=w192",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Membres",
+      "short_name": "Membres",
+      "description": "Gérer les membres",
+      "url": "./index.html?tab=membres"
+    },
+    {
+      "name": "Apports",
+      "short_name": "Apports",
+      "description": "Voir les apports",
+      "url": "./index.html?tab=apports"
     }
   ]
 }
