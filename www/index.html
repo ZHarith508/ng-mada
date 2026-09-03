@@ -2149,7 +2149,8 @@ function initGasBridge() {
 }
 
 function createGasProxy() {
-    const context = { _success: null, _failure: null };
+    let successHandler = null;
+    let failureHandler = null;
     
     function executeMethod(method, data) {
         console.log('📤 Appel méthode:', method);
@@ -2171,44 +2172,48 @@ function createGasProxy() {
         })
         .then(result => {
             console.log('📥 Réponse pour', method, ':', result);
-            if (context._success) {
-                context._success(result);
+            if (successHandler) {
+                successHandler(result);
             }
         })
         .catch(err => {
             console.error('❌ Erreur fetch pour', method, ':', err.message);
-            // En cas d'erreur, retourner des données vides
-            if (context._failure) {
-                context._failure(err);
-            } else if (context._success) {
-                // Si pas de failure handler, on retourne des données vides
-                context._success({ __error: err.message });
+            if (failureHandler) {
+                failureHandler(err);
+            } else if (successHandler) {
+                successHandler({ __error: err.message });
             }
         });
     }
     
-    const proxy = {
+    // Créer un objet qui gère les handlers
+    const runObj = {
         withSuccessHandler: function(callback) {
-            context._success = callback;
-            return proxy;
+            successHandler = callback;
+            return this;
         },
         withFailureHandler: function(callback) {
-            context._failure = callback;
-            return proxy;
+            failureHandler = callback;
+            return this;
         }
     };
     
-    return new Proxy(proxy, {
+    // Proxy pour intercepter les appels de méthodes
+    return new Proxy(runObj, {
         get(target, prop) {
+            // Si c'est une méthode de handler, retourner la fonction
             if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
-                return target[prop];
+                return target[prop].bind(target);
             }
-            if (typeof prop === 'string') {
+            
+            // Si c'est une autre propriété (nom de méthode), retourner une fonction
+            if (typeof prop === 'string' && !prop.startsWith('_')) {
                 return function(data) {
                     executeMethod(prop, data);
                     return target;
                 };
             }
+            
             return target[prop];
         }
     });
