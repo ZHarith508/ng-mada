@@ -2116,6 +2116,44 @@ const GAS_CONFIG = {
 })();
 
 // ============================================================
+//  VARIABLES GLOBALES
+// ============================================================
+
+var STOCKAGE_TOKEN = 'ngmada_session_token';
+var sessionToken = null;
+var adminUnlocked = false;
+var savedPin = '';
+var pendingAction = null;
+var loadedTabs = {};  // NE PAS RÉINITIALISER AILLEURS !
+var dernierMembresListe = [];
+var dernierMouvementsListe = [];
+var photoCibleId = null;
+var photoCibleNom = null;
+var actualiteEnModificationId = null;
+var mobileMenuInitialized = false;
+
+// ✅ AJOUTER CETTE FONCTION POUR FORCER LE CHARGEMENT DU DASHBOARD
+function forcerChargementDashboard() {
+    console.log('🔄 Forçage du chargement du dashboard...');
+    if (!loadedTabs['dashboard']) {
+        loadedTabs['dashboard'] = true;
+        if (typeof loadDashboard === 'function') {
+            loadDashboard();
+        } else {
+            console.error('❌ loadDashboard non défini');
+        }
+    }
+}
+
+// ✅ AJOUTER CETTE FONCTION POUR VÉRIFIER L'ÉTAT
+function verifierEtatApplication() {
+    console.log('🔍 État de l\'application:');
+    console.log('  - loadedTabs:', loadedTabs);
+    console.log('  - adminUnlocked:', adminUnlocked);
+    console.log('  - google.script.run disponible:', !!(typeof google !== 'undefined' && google.script && google.script.run));
+    console.log('  - loadDashboard défini:', typeof loadDashboard === 'function');
+}
+// ============================================================
 //  MODE DÉMO PERMANENT
 // ============================================================
 
@@ -2218,25 +2256,41 @@ function activateDemoMode() {
     
     // ✅ NE PAS TOUCHER à loadedTabs ici !
     
-    setTimeout(function() {
-        console.log('🔄 Affichage des données démo...');
-        var loginGate = document.getElementById('loginGate');
-        if (loginGate) loginGate.style.display = 'none';
-        var appShell = document.getElementById('appShell');
-        if (appShell) appShell.style.display = 'block';
-        var splash = document.getElementById('splashScreen');
-        if (splash) splash.style.display = 'none';
-        var userNom = document.getElementById('utilisateurNom');
-        if (userNom) userNom.textContent = 'Admin';
-        var userNameDisplay = document.getElementById('userNameDisplay');
-        if (userNameDisplay) userNameDisplay.textContent = 'Admin';
-        
-        if (typeof loadDashboard === 'function' && !loadedTabs['dashboard']) {
-            loadedTabs['dashboard'] = true;
-            loadDashboard();
-        }
-        console.log('✅ Mode démo activé avec succès !');
-    }, 300);
+    // Dans activateDemoMode(), remplacer le setTimeout par ceci :
+setTimeout(function() {
+    console.log('🔄 Affichage des données démo...');
+    
+    // Afficher l'interface
+    var loginGate = document.getElementById('loginGate');
+    if (loginGate) loginGate.style.display = 'none';
+    
+    var appShell = document.getElementById('appShell');
+    if (appShell) appShell.style.display = 'block';
+    
+    var splash = document.getElementById('splashScreen');
+    if (splash) splash.style.display = 'none';
+    
+    // Mettre à jour le nom
+    var userNom = document.getElementById('utilisateurNom');
+    if (userNom) userNom.textContent = 'Admin';
+    
+    var userNameDisplay = document.getElementById('userNameDisplay');
+    if (userNameDisplay) userNameDisplay.textContent = 'Admin';
+    
+    // ✅ FORCER LE CHARGEMENT DU DASHBOARD
+    if (typeof loadDashboard === 'function' && !loadedTabs['dashboard']) {
+        console.log('📊 Chargement du dashboard...');
+        loadedTabs['dashboard'] = true;
+        loadDashboard();
+    } else if (typeof loadDashboard === 'function') {
+        console.log('📊 Dashboard déjà chargé, rafraîchissement...');
+        loadDashboard();
+    } else {
+        console.error('❌ loadDashboard non défini !');
+    }
+    
+    console.log('✅ Mode démo activé avec succès !');
+}, 300);
 }
 
 // ============================================================
@@ -3854,15 +3908,24 @@ function afficherApp(nom) {
     sessionStorage.setItem(STOCKAGE_TOKEN, sessionToken);
     localStorage.setItem(STOCKAGE_TOKEN, sessionToken);
   }
+  
+  // ✅ FORCER LE CHARGEMENT DU DASHBOARD
   if (!loadedTabs['dashboard']) {
+    console.log('📊 Chargement initial du dashboard...');
     loadedTabs['dashboard'] = true;
-    loadDashboard();
+    if (typeof loadDashboard === 'function') {
+        loadDashboard();
+    }
+  } else {
+    console.log('📊 Dashboard déjà chargé');
+    if (typeof loadDashboard === 'function') {
+        loadDashboard(); // Rafraîchir
+    }
   }
   
   setTimeout(function() { initNavigation(); initMobileMenu(); initDarkMode(); initLanguage(); }, 200);
   setTimeout(chargerProfil, 500);
 }
-
 function deconnecterDepuisMenu() {
   function nettoyerEtAfficherLogin() {
     sessionStorage.removeItem(STOCKAGE_TOKEN);
