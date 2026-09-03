@@ -2054,9 +2054,6 @@ body.dark-mode .btn-save:hover { background: #16a34a !important; }
 
 </div>
 
-<!-- ===== SCRIPT ===== -->
-<!-- ===== SCRIPT CORRIGÉ ===== -->
-<!-- ===== SCRIPT COMPLET CORRIGÉ ===== -->
 <script>
 // ============================================================
 //  VARIABLES GLOBALES
@@ -2094,7 +2091,6 @@ function initGasBridge() {
                          google.script.run &&
                          typeof google.script.run.withSuccessHandler === 'function';
     
-    // ✅ SUR GITHUB PAGES, UTILISER LE PROXY FETCH
     if (isGitHubPages) {
         console.log('🌐 GitHub Pages - Proxy fetch vers:', GAS_CONFIG.url);
         if (typeof google === 'undefined') {
@@ -2105,7 +2101,6 @@ function initGasBridge() {
         }
         google.script.run = createGasProxy();
         
-        // 🔥 Forcer le chargement après 2 secondes
         setTimeout(function() {
             console.log('🔄 Forçage du chargement initial...');
             if (!loadedTabs['dashboard']) {
@@ -2118,7 +2113,6 @@ function initGasBridge() {
         return;
     }
     
-    // Pour Capacitor (APK)
     const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
     if (isCapacitor) {
         console.log('📱 Mode Capacitor détecté');
@@ -2134,7 +2128,6 @@ function initGasBridge() {
         return;
     }
     
-    // Cas natif (Google Apps Script)
     if (hasNativeGAS) {
         console.log('🌐 Initialisation du pont GAS natif...');
         if (typeof google === 'undefined') window.google = { script: {} };
@@ -2143,7 +2136,6 @@ function initGasBridge() {
         return;
     }
     
-    // Fallback: mode démo
     console.log('🌐 Mode démo activé (fallback)');
     activateDemoMode();
 }
@@ -2186,7 +2178,6 @@ function createGasProxy() {
         });
     }
     
-    // Créer un objet qui gère les handlers
     const runObj = {
         withSuccessHandler: function(callback) {
             successHandler = callback;
@@ -2198,29 +2189,24 @@ function createGasProxy() {
         }
     };
     
-    // Proxy pour intercepter les appels de méthodes
     return new Proxy(runObj, {
         get(target, prop) {
-            // Si c'est une méthode de handler, retourner la fonction
             if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
                 return target[prop].bind(target);
             }
-            
-            // Si c'est une autre propriété (nom de méthode), retourner une fonction
             if (typeof prop === 'string' && !prop.startsWith('_')) {
                 return function(data) {
                     executeMethod(prop, data);
                     return target;
                 };
             }
-            
             return target[prop];
         }
     });
 }
 
 // ============================================================
-//  MODE DÉMO - UNIQUEMENT EN FALLBACK
+//  MODE DÉMO
 // ============================================================
 
 function activateDemoMode() {
@@ -2428,7 +2414,7 @@ function testerConnexion() {
 }
 
 // ============================================================
-//  DÉMARRAGE
+//  DÉMARRAGE - CORRIGÉ
 // ============================================================
 
 (function() {
@@ -2436,15 +2422,22 @@ function testerConnexion() {
     if (window._ngmada_loaded) { console.warn('⚠️ App déjà chargée'); return; }
     window._ngmada_loaded = true;
     
-    window.addEventListener('load', function() {
+    function hideSplash() {
         var splash = document.getElementById('splashScreen');
-        if (splash) splash.style.display = 'none';
+        if (splash) {
+            splash.style.display = 'none';
+            splash.classList.add('hidden');
+            console.log('✅ Splash caché');
+        }
+    }
+    
+    window.addEventListener('load', function() {
+        console.log('📄 Page chargée');
+        hideSplash();
     });
     
-    setTimeout(function() {
-        var splash = document.getElementById('splashScreen');
-        if (splash) splash.style.display = 'none';
-    }, 3000);
+    setTimeout(function() { hideSplash(); }, 1500);
+    setTimeout(function() { hideSplash(); }, 3000);
     
     if (window.Capacitor && window.Capacitor.isNativePlatform()) {
         console.log('📱 Mode Capacitor détecté');
@@ -4330,24 +4323,35 @@ function clicCaisseVerrouillee() {
 }
 
 // ============================================================
-//  INITIALISATION FINALE
+//  INITIALISATION FINALE - CORRIGÉE
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📄 DOM chargé');
+    
+    var splash = document.getElementById('splashScreen');
+    if (splash) {
+        splash.style.display = 'none';
+        splash.classList.add('hidden');
+        console.log('✅ Splash forcé à disparaître');
+    }
+    
     initGasBridge();
     initDarkMode();
     initLanguage();
     reinitialiserCompteurFacture();
+    
     var accent = localStorage.getItem('ngmada_accent');
     if (accent) {
         document.documentElement.style.setProperty('--gold', accent);
         document.documentElement.style.setProperty('--nav-active', accent);
     }
+    
     var selectLangue = document.getElementById('selectLangue');
     if (selectLangue) {
         selectLangue.value = localStorage.getItem('ngmada_langue') || 'fr';
     }
+    
     var headerAvatar = document.getElementById('headerUserAvatar');
     if (headerAvatar) {
         headerAvatar.addEventListener('click', function(e) {
@@ -4356,16 +4360,19 @@ document.addEventListener('DOMContentLoaded', function() {
             ouvrirMenuDepuisAvatar();
         });
     }
+    
     setTimeout(function() {
         if (typeof initNavigation === 'function') initNavigation();
         if (typeof initMobileMenu === 'function') initMobileMenu();
         if (typeof initMenuNav === 'function') initMenuNav();
         if (typeof initAvatarMenu === 'function') initAvatarMenu();
     }, 800);
+    
     console.log('✅ Initialisation terminée');
 });
 
 console.log('✅ Toutes les fonctions sont chargées');
 </script>
+
 </body>
 </html>
