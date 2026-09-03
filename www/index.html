@@ -2419,9 +2419,12 @@ function activateDemoMode() {
     google.script.run = new Proxy(runObj, handler);
     console.log('✅ Proxy démo permanent activé !');
     
-    // 🔥 FORCER L'AFFICHAGE APRÈS ACTIVATION (SANS RÉINITIALISER loadedTabs)
+    // ✅ NE PAS RÉINITIALISER loadedTabs ici - SUPPRIMER cette ligne
+    // loadedTabs = {}; // <-- À SUPPRIMER
+    
+    // Afficher l'application UNE SEULE FOIS
     setTimeout(function() {
-        console.log('🔄 Chargement des données démo...');
+        console.log('🔄 Affichage des données démo...');
         
         var loginGate = document.getElementById('loginGate');
         if (loginGate) {
@@ -2447,47 +2450,20 @@ function activateDemoMode() {
             userNameDisplay.textContent = 'Admin';
         }
         
-        // 🔥 NE PAS RÉINITIALISER loadedTabs !
-        // loadedTabs = {};  // <-- SUPPRIMER CETTE LIGNE
+        // ✅ NE PAS RÉINITIALISER loadedTabs
         
-        // Charger les données UNE SEULE FOIS
-        if (typeof loadDashboard === 'function' && !loadedTabs['dashboard']) {
-            loadedTabs['dashboard'] = true;
-            loadDashboard();
-        }
-        
+        // Charger UNIQUEMENT le dashboard au démarrage
         setTimeout(function() {
-            if (typeof loadMembres === 'function' && !loadedTabs['membres']) {
-                loadedTabs['membres'] = true;
-                loadMembres();
+            if (typeof loadDashboard === 'function' && !loadedTabs['dashboard']) {
+                loadedTabs['dashboard'] = true;
+                loadDashboard();
             }
-        }, 400);
+        }, 300);
         
-        setTimeout(function() {
-            if (typeof loadApports === 'function' && !loadedTabs['apports']) {
-                loadedTabs['apports'] = true;
-                loadApports();
-            }
-        }, 800);
-        
-        setTimeout(function() {
-            if (typeof loadFactures === 'function' && !loadedTabs['factures']) {
-                loadedTabs['factures'] = true;
-                loadFactures();
-            }
-        }, 1200);
-        
-        setTimeout(function() {
-            if (typeof loadCaisse === 'function' && !loadedTabs['caisse']) {
-                loadedTabs['caisse'] = true;
-                loadCaisse();
-            }
-        }, 1600);
-        
+        // Les autres onglets se chargeront au clic
         console.log('✅ Mode démo permanent activé avec succès !');
     }, 300);
 }
-// ============================================================
 //  INITIALISATION DU PONT
 // ============================================================
 
