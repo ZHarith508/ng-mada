@@ -4,6 +4,7 @@
   "description": "Gestion des apports, caisse et membres de votre association",
   "start_url": "./index.html",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "background_color": "#0f172a",
   "theme_color": "#facc15",
   "orientation": "portrait",
@@ -16,7 +17,16 @@
     {
       "src": "https://drive.google.com/thumbnail?id=1oLTjgg8v_wpNw_1izzaVxPK9SM3XpmG-&sz=w192",
       "sizes": "1080x1920",
-      "type": "image/png"
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard NG-MADA"
+    },
+    {
+      "src": "https://drive.google.com/thumbnail?id=1oLTjgg8v_wpNw_1izzaVxPK9SM3XpmG-&sz=w192",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dashboard NG-MADA"
     }
   ],
   "icons": [
@@ -57,6 +67,16 @@
       "short_name": "Apports",
       "description": "Voir les apports",
       "url": "./index.html?tab=apports"
+    },
+    {
+      "name": "Caisse",
+      "short_name": "Caisse",
+      "description": "Gestion de la caisse",
+      "url": "./index.html?tab=caisse"
     }
-  ]
+  ],
+  "launch_handler": {
+    "client_mode": ["focus-existing", "auto"]
+  },
+  "prefer_related_applications": false
 }
