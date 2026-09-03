@@ -2417,10 +2417,13 @@ function activateDemoMode() {
     };
     
     google.script.run = new Proxy(runObj, handler);
-    console.log('✅ Proxy démo permanent activé !');
+      console.log('✅ Proxy démo permanent activé !');
     
-    // 🔥 FORCER L'AFFICHAGE APRÈS ACTIVATION
+    // 🔥 UN SEUL BLOC POUR LE CHARGEMENT DES DONNÉES
     setTimeout(function() {
+        console.log('🔄 Chargement des données démo...');
+        
+        // Forcer l'affichage
         var loginGate = document.getElementById('loginGate');
         if (loginGate) {
             loginGate.style.display = 'none';
@@ -2446,10 +2449,9 @@ function activateDemoMode() {
             userNameDisplay.textContent = 'Admin';
         }
         
-        // Réinitialiser les onglets chargés
+        // Charger les données des onglets UNE SEULE FOIS
         loadedTabs = {};
         
-        // Charger les données des onglets
         if (typeof loadDashboard === 'function') {
             loadedTabs['dashboard'] = true;
             loadDashboard();
@@ -2459,57 +2461,28 @@ function activateDemoMode() {
             if (typeof loadMembres === 'function') {
                 loadMembres();
             }
-        }, 300);
+        }, 400);
         
         setTimeout(function() {
             if (typeof loadApports === 'function') {
                 loadApports();
             }
-        }, 600);
+        }, 800);
         
         setTimeout(function() {
             if (typeof loadFactures === 'function') {
                 loadFactures();
             }
-        }, 900);
+        }, 1200);
         
         setTimeout(function() {
             if (typeof loadCaisse === 'function') {
                 loadCaisse();
             }
-        }, 1200);
-
-        // Dans activateDemoMode(), juste avant le dernier console.log
-
-// 🔥 FORCER LE CHARGEMENT DES DONNÉES
-setTimeout(function() {
-    console.log('🔄 Chargement des données démo...');
-    
-    // Charger les membres
-    if (typeof loadMembres === 'function') {
-        loadMembres();
-    }
-    
-    setTimeout(function() {
-        if (typeof loadApports === 'function') {
-            loadApports();
-        }
+        }, 1600);
+        
+        console.log('✅ Mode démo permanent activé avec succès !');
     }, 300);
-    
-    setTimeout(function() {
-        if (typeof loadFactures === 'function') {
-            loadFactures();
-        }
-    }, 600);
-    
-    setTimeout(function() {
-        if (typeof loadCaisse === 'function') {
-            loadCaisse();
-        }
-    }, 900);
-}, 200);
-
-console.log('✅ Mode démo permanent activé avec succès !');
 }
 
 // ============================================================
