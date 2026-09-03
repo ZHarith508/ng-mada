@@ -1750,7 +1750,7 @@ body.dark-mode .btn-save:hover { background: #16a34a !important; }
 
 <!-- SPLASH SCREEN -->
 <div id="splashScreen" style="position:fixed;inset:0;background:#0f172a;display:flex;justify-content:center;align-items:center;z-index:10000;flex-direction:column;">
-  <img src="https://drive.google.com/thumbnail?id=1tNXUPl0gC6aAeaJ5C4evF4zMaZJNOBgb&sz=w200" style="width:150px;margin-bottom:20px;">
+  <img src="https://drive.google.com/thumbnail?id=1oLTjgg8v_wpNw_1izzaVxPK9SM3XpmG-&sz=w200" style="width:150px;margin-bottom:20px;">
   <div style="color:#facc15;font-size:14px;font-weight:300;letter-spacing:1px;animation:pulse 1.2s infinite;">CHARGEMENT...</div>
 </div>
 
@@ -2056,11 +2056,46 @@ body.dark-mode .btn-save:hover { background: #16a34a !important; }
 </div>
 
 <script>
-// ============================================================
-//  SCRIPT NG-MADA - VERSION FINALE AVEC MODE DÉMO PERMANENT
-// ============================================================
-
-console.log('🚀 Script NG-MADA chargé');
+(function() {
+    console.log('🚀 NG-MADA - Démarrage');
+    
+    // Empêcher le rechargement multiple
+    if (window._ngmada_loaded) {
+        console.warn('⚠️ App déjà chargée, arrêt du rechargement');
+        return;
+    }
+    window._ngmada_loaded = true;
+    
+    // Cacher le splash screen après chargement
+    window.addEventListener('load', function() {
+        console.log('✅ App chargée');
+        var splash = document.getElementById('splashScreen');
+        if (splash) {
+            setTimeout(function() {
+                splash.style.display = 'none';
+            }, 500);
+        }
+    });
+    
+    // Détection Capacitor
+    const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
+    if (isCapacitor) {
+        console.log('📱 Mode Capacitor détecté');
+        window.NG_MADA_IS_NATIVE = true;
+        
+        // Désactiver le Service Worker - CAUSE DU RECHARGEMENT INFINI
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for (var reg of registrations) {
+                    reg.unregister();
+                    console.log('🗑️ Service Worker désactivé pour l\'APK');
+                }
+            }).catch(function(err) {
+                console.log('⚠️ Erreur désactivation SW:', err);
+            });
+        }
+    }
+})();
 
 // ============================================================
 //  PONT POUR APK/PWA - CONNEXION À GOOGLE APPS SCRIPT
