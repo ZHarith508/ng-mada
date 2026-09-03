@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <!-- ===== PWA META TAGS ===== -->
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1tNXUPl0gC6aAeaJ5C4evF4zMaZJNOBgb&sz=w192">
+<link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1oLTjgg8v_wpNw_1izzaVxPK9SM3XpmG-&sz=w192">
 <meta name="theme-color" content="#0f172a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1744,6 +1744,10 @@ body.dark-mode .btn-save:hover { background: #16a34a !important; }
 .menu-section .menu-toggle { position: relative; z-index: 2; }
 #selectLangue { position: relative; z-index: 2; }
 .menu-section button { position: relative; z-index: 2; }
+/* Cacher le splash après chargement */
+#splashScreen.hidden {
+    display: none !important;
+}
 </style>
 </head>
 <body>
@@ -2067,15 +2071,30 @@ body.dark-mode .btn-save:hover { background: #16a34a !important; }
     window._ngmada_loaded = true;
     
     // Cacher le splash screen après chargement
-    window.addEventListener('load', function() {
-        console.log('✅ App chargée');
-        var splash = document.getElementById('splashScreen');
-        if (splash) {
-            setTimeout(function() {
-                splash.style.display = 'none';
-            }, 500);
-        }
-    });
+// Cacher le splash screen après chargement
+window.addEventListener('load', function() {
+    console.log('✅ App chargée');
+    var splash = document.getElementById('splashScreen');
+    if (splash) {
+        splash.style.display = 'none';
+    }
+});
+
+// Forcer la disparition du splash après 3 secondes (même si load ne se déclenche pas)
+setTimeout(function() {
+    var splash = document.getElementById('splashScreen');
+    if (splash) {
+        splash.style.display = 'none';
+    }
+    var loginGate = document.getElementById('loginGate');
+    if (loginGate) {
+        loginGate.style.display = 'none';
+    }
+    var appShell = document.getElementById('appShell');
+    if (appShell) {
+        appShell.style.display = 'block';
+    }
+}, 3000);
     
     // Détection Capacitor
     const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
