@@ -1,8 +1,8 @@
 {
-  "name": "NG-MADA - Gestion des Apports",
+  "name": "NG-MADA",
   "short_name": "NG-MADA",
-  "description": "Gestion des apports, caisse et membres de votre association",
-  "start_url": "/",
+  "description": "Suivi des apports, caisse et membres",
+  "start_url": "/www/index.html",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#facc15",
