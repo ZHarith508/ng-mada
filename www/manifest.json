@@ -13,22 +13,6 @@
   "lang": "fr",
   "dir": "ltr",
   "categories": ["business", "finance"],
-  "screenshots": [
-    {
-      "src": "https://drive.google.com/thumbnail?id=1oLTjgg8v_wpNw_1izzaVxPK9SM3XpmG-&sz=w192",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Dashboard NG-MADA"
-    },
-    {
-      "src": "https://drive.google.com/thumbnail?id=1oLTjgg8v_wpNw_1izzaVxPK9SM3XpmG-&sz=w192",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Dashboard NG-MADA"
-    }
-  ],
   "icons": [
     {
       "src": "https://drive.google.com/thumbnail?id=1oLTjgg8v_wpNw_1izzaVxPK9SM3XpmG-&sz=w192",
