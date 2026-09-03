@@ -2056,6 +2056,7 @@ body.dark-mode .btn-save:hover { background: #16a34a !important; }
 
 <!-- ===== SCRIPT ===== -->
 <!-- ===== SCRIPT CORRIGÉ ===== -->
+<!-- ===== SCRIPT COMPLET CORRIGÉ ===== -->
 <script>
 // ============================================================
 //  VARIABLES GLOBALES
@@ -2075,20 +2076,150 @@ var actualiteEnModificationId = null;
 var mobileMenuInitialized = false;
 
 // ============================================================
-//  CONFIGURATION GAS - METTEZ VOTRE VRAIE URL ICI
+//  CONFIGURATION GAS - URL DE VOTRE WEB APP
 // ============================================================
 
 const GAS_CONFIG = {
-    // 🔥 METTEZ VOTRE URL DE WEB APP ICI
     url: 'https://script.google.com/macros/s/AKfycbzu3LlRkWRi6JrjBFpvHM_oJVWUUGnl7WvxhxcGOvZrX0-JLHkt9XxN5W-TayArg35a3w/exec'
 };
+
+// ============================================================
+//  PONT GAS - VERSION CORRIGÉE
+// ============================================================
+
+function initGasBridge() {
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    const hasNativeGAS = typeof google !== 'undefined' && 
+                         google.script && 
+                         google.script.run &&
+                         typeof google.script.run.withSuccessHandler === 'function';
+    
+    // ✅ SUR GITHUB PAGES, UTILISER LE PROXY FETCH
+    if (isGitHubPages) {
+        console.log('🌐 GitHub Pages - Proxy fetch vers:', GAS_CONFIG.url);
+        if (typeof google === 'undefined') {
+            window.google = { script: {} };
+        }
+        if (typeof google.script === 'undefined') {
+            google.script = {};
+        }
+        google.script.run = createGasProxy();
+        
+        // 🔥 Forcer le chargement après 2 secondes
+        setTimeout(function() {
+            console.log('🔄 Forçage du chargement initial...');
+            if (!loadedTabs['dashboard']) {
+                loadedTabs['dashboard'] = true;
+                if (typeof loadDashboard === 'function') {
+                    loadDashboard();
+                }
+            }
+        }, 2000);
+        return;
+    }
+    
+    // Pour Capacitor (APK)
+    const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
+    if (isCapacitor) {
+        console.log('📱 Mode Capacitor détecté');
+        if (hasNativeGAS) {
+            console.log('✅ google.script.run disponible en natif');
+            if (typeof google === 'undefined') window.google = { script: {} };
+            if (typeof google.script === 'undefined') google.script = {};
+            google.script.run = createGasProxy();
+            return;
+        }
+        console.log('⚠️ google.script.run non disponible, mode démo');
+        activateDemoMode();
+        return;
+    }
+    
+    // Cas natif (Google Apps Script)
+    if (hasNativeGAS) {
+        console.log('🌐 Initialisation du pont GAS natif...');
+        if (typeof google === 'undefined') window.google = { script: {} };
+        if (typeof google.script === 'undefined') google.script = {};
+        google.script.run = createGasProxy();
+        return;
+    }
+    
+    // Fallback: mode démo
+    console.log('🌐 Mode démo activé (fallback)');
+    activateDemoMode();
+}
+
+function createGasProxy() {
+    const context = { _success: null, _failure: null };
+    
+    function executeMethod(method, data) {
+        console.log('📤 Appel méthode:', method);
+        console.log('📦 Données:', data);
+        
+        fetch(GAS_CONFIG.url, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                method: method, 
+                data: data || {} 
+            })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('HTTP ' + res.status + ' - ' + res.statusText);
+            return res.json();
+        })
+        .then(result => {
+            console.log('📥 Réponse pour', method, ':', result);
+            if (context._success) {
+                context._success(result);
+            }
+        })
+        .catch(err => {
+            console.error('❌ Erreur fetch pour', method, ':', err.message);
+            // En cas d'erreur, retourner des données vides
+            if (context._failure) {
+                context._failure(err);
+            } else if (context._success) {
+                // Si pas de failure handler, on retourne des données vides
+                context._success({ __error: err.message });
+            }
+        });
+    }
+    
+    const proxy = {
+        withSuccessHandler: function(callback) {
+            context._success = callback;
+            return proxy;
+        },
+        withFailureHandler: function(callback) {
+            context._failure = callback;
+            return proxy;
+        }
+    };
+    
+    return new Proxy(proxy, {
+        get(target, prop) {
+            if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
+                return target[prop];
+            }
+            if (typeof prop === 'string') {
+                return function(data) {
+                    executeMethod(prop, data);
+                    return target;
+                };
+            }
+            return target[prop];
+        }
+    });
+}
 
 // ============================================================
 //  MODE DÉMO - UNIQUEMENT EN FALLBACK
 // ============================================================
 
 function activateDemoMode() {
-    console.warn('⚠️ Mode démo activé - Utilisez des données factices');
+    console.warn('⚠️ Mode démo activé - Données factices');
     
     if (typeof google === 'undefined') {
         window.google = { script: {} };
@@ -2266,124 +2397,29 @@ function activateDemoMode() {
 }
 
 // ============================================================
-//  PONT GAS - CORRIGÉ
+//  TEST DE CONNEXION
 // ============================================================
 
-function initGasBridge() {
-    const isGitHubPages = window.location.hostname.includes('github.io');
-    const hasNativeGAS = typeof google !== 'undefined' && 
-                         google.script && 
-                         google.script.run &&
-                         typeof google.script.run.withSuccessHandler === 'function';
+function testerConnexion() {
+    console.log('🔍 Test de connexion GAS...');
+    console.log('📍 URL:', GAS_CONFIG.url);
     
-    // ✅ SUR GITHUB PAGES, UTILISER LE PROXY FETCH
-    if (isGitHubPages) {
-        console.log('🌐 GitHub Pages détecté - Utilisation du proxy fetch vers:', GAS_CONFIG.url);
-        if (typeof google === 'undefined') {
-            window.google = { script: {} };
-        }
-        if (typeof google.script === 'undefined') {
-            google.script = {};
-        }
-        google.script.run = createGasProxy();
-        console.log('✅ Proxy fetch créé avec succès');
-        return;
-    }
-    
-    // Pour Capacitor (APK)
-    const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
-    if (isCapacitor) {
-        console.log('📱 Mode Capacitor détecté');
-        if (hasNativeGAS) {
-            console.log('✅ google.script.run disponible en natif');
-            if (typeof google === 'undefined') window.google = { script: {} };
-            if (typeof google.script === 'undefined') google.script = {};
-            google.script.run = createGasProxy();
-            return;
-        }
-        console.log('⚠️ google.script.run non disponible, mode démo');
-        activateDemoMode();
-        return;
-    }
-    
-    // Cas natif (Google Apps Script)
-    if (hasNativeGAS) {
-        console.log('🌐 Initialisation du pont GAS natif...');
-        if (typeof google === 'undefined') window.google = { script: {} };
-        if (typeof google.script === 'undefined') google.script = {};
-        google.script.run = createGasProxy();
-        return;
-    }
-    
-    // Fallback: mode démo
-    console.log('🌐 Mode démo activé (fallback)');
-    activateDemoMode();
-}
-
-function createGasProxy() {
-    const context = { _success: null, _failure: null };
-    
-    function executeMethod(method, data) {
-        console.log('📤 Appel méthode:', method);
-        console.log('📦 Données envoyées:', data);
-        
-        fetch(GAS_CONFIG.url, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                method: method, 
-                data: data || {} 
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+        console.log('✅ google.script.run disponible');
+        google.script.run
+            .withSuccessHandler(function(result) {
+                console.log('✅ SUCCÈS:', result);
+                alert('✅ Connexion GAS OK !\n' + JSON.stringify(result, null, 2));
             })
-        })
-        .then(res => {
-            if (!res.ok) throw new Error('HTTP ' + res.status + ' - ' + res.statusText);
-            return res.json();
-        })
-        .then(result => {
-            console.log('📥 Réponse reçue pour', method, result);
-            if (context._success) {
-                context._success(result);
-            } else {
-                console.warn('⚠️ Aucun success handler pour', method);
-            }
-        })
-        .catch(err => {
-            console.error('❌ Erreur fetch pour', method, err.message);
-            if (context._failure) {
-                context._failure(err);
-            } else {
-                console.error('❌ Erreur non gérée:', err);
-            }
-        });
+            .withFailureHandler(function(err) {
+                console.error('❌ ÉCHEC:', err);
+                alert('❌ Erreur de connexion:\n' + err.message);
+            })
+            .testerConnexion({ test: 'Hello from frontend!' });
+    } else {
+        console.error('❌ google.script.run NON DISPONIBLE');
+        alert('❌ google.script.run non disponible');
     }
-    
-    const proxy = {
-        withSuccessHandler: function(callback) {
-            context._success = callback;
-            return proxy;
-        },
-        withFailureHandler: function(callback) {
-            context._failure = callback;
-            return proxy;
-        }
-    };
-    
-    return new Proxy(proxy, {
-        get(target, prop) {
-            if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
-                return target[prop];
-            }
-            if (typeof prop === 'string') {
-                return function(data) {
-                    executeMethod(prop, data);
-                    return target;
-                };
-            }
-            return target[prop];
-        }
-    });
 }
 
 // ============================================================
@@ -2484,7 +2520,7 @@ function initNavigation() {
 }
 
 // ============================================================
-//  DASHBOARD - CORRIGÉ AVEC GESTION D'ERREUR
+//  DASHBOARD
 // ============================================================
 
 function loadDashboard() {
@@ -2499,14 +2535,12 @@ function loadDashboard() {
         if (loading) loading.style.display = 'none';
         if (content) content.style.display = 'block';
         
-        // Vérifier si le résultat contient une erreur
         if (result && result.__error) {
             console.error('❌ Erreur dashboard:', result.__error);
             afficherStatsDashboard(null);
             return;
         }
         
-        // Si le résultat est un tableau ou un objet
         if (result && typeof result === 'object') {
             afficherStatsDashboard(result);
         } else {
@@ -2518,7 +2552,6 @@ function loadDashboard() {
         console.error('❌ Erreur chargement dashboard:', err);
         if (loading) loading.style.display = 'none';
         if (content) content.style.display = 'block';
-        // En cas d'erreur, utiliser les données du mode démo
         afficherStatsDashboard(null);
     };
     
@@ -2543,7 +2576,6 @@ function loadDashboard() {
 function afficherStatsDashboard(d) {
     console.log('📊 afficherStatsDashboard appelé avec:', d);
     
-    // Données par défaut (mode démo)
     var data = d || { 
         totalVerse: 1805000, 
         totalReste: 4195000, 
@@ -2621,7 +2653,6 @@ function afficherStatsDashboard(d) {
         }
     }
     
-    // Charger les graphiques
     if (typeof google !== 'undefined' && google.script && google.script.run) {
         try {
             google.script.run
@@ -2840,52 +2871,6 @@ function loadCaisse() {
     var fabCaisse = document.getElementById('btnCaisseFab');
     if (fabCaisse) { fabCaisse.textContent = '＋'; fabCaisse.classList.remove('close-mode'); }
     setTimeout(updateCaisseRecuPar, 500);
-}
-
-function afficherErreurCaisse(msg) {
-    var loading = document.getElementById('caisseLoading');
-    var content = document.getElementById('caisseContent');
-    if (loading) loading.style.display = 'none';
-    if (content) {
-        content.style.display = 'block';
-        content.innerHTML = '<div class="empty">⚠️ Erreur : ' + msg + '</div>';
-    }
-}
-
-function majBandeauGlobal(totalEntree, totalSortie) {
-    var entreeEl = document.getElementById('soldeEntreeGlobal');
-    var sortieEl = document.getElementById('soldeSortieGlobal');
-    if (entreeEl) entreeEl.textContent = totalEntree.toLocaleString('fr-FR') + ' Ar';
-    if (sortieEl) sortieEl.textContent = totalSortie.toLocaleString('fr-FR') + ' Ar';
-}
-
-function afficherMouvements(items) {
-    var box = document.getElementById('caisseContent');
-    if (!box) return;
-    if (!items || !items.length) { box.innerHTML = '<div class="empty">Aucun mouvement pour le moment.</div>'; return; }
-    box.innerHTML = '';
-    items.forEach(function(m) {
-        var isEntree = m.type === 'Entrée';
-        var el = document.createElement('div');
-        el.className = 'item';
-        var dateFormatee = m.date ? (m.date.includes('/') ? m.date : new Date(m.date).toLocaleDateString('fr-FR')) : '';
-        var isAdmin = adminUnlocked;
-        el.innerHTML =
-            '<div class="item-main">' +
-            '<div class="row1"><span>' + (m.numFacture || '') + '</span><span>' + dateFormatee + '</span></div>' +
-            '<div class="titre">' + (m.description || m.categorie || '—') + '</div>' +
-            '<div class="sous">' + (m.categorie || '') + (m.nom ? ' · ' + m.nom : '') + (m.enregistrePar ? ' · Reçu par : ' + m.enregistrePar : '') + '</div>' +
-            '<div class="montant ' + (isEntree ? 'pos' : 'neg') + '">' + (isEntree ? '⬆️ +' : '⬇️ -') + (isEntree ? m.entree : m.sortie).toLocaleString('fr-FR') + ' Ar</div>' +
-            (m.justificatif ? '<br><a class="doc-link" href="' + m.justificatif + '" target="_blank">📄 Voir le PDF</a>' : '') +
-            '<br><button class="action-btn" data-row="' + m.row + '" data-action="imprimer">🖶️ Imprimer / Envoyer</button>' +
-            (isAdmin ? '<button class="action-btn" data-action="supprimer" style="color:#f87171;border-color:#f87171;">🗑️ Supprimer</button>' : '') +
-            '</div>';
-        var btnImprimer = el.querySelector('[data-action="imprimer"]');
-        if (btnImprimer) btnImprimer.addEventListener('click', function() { imprimerJustificatif(m.row, this); });
-        var btnSupprimerCaisse = el.querySelector('[data-action="supprimer"]');
-        if (btnSupprimerCaisse) btnSupprimerCaisse.addEventListener('click', function() { supprimerMouvementCaisseWeb(m.row, this); });
-        box.appendChild(el);
-    });
 }
 
 // ============================================================
