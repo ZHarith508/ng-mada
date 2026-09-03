@@ -2453,21 +2453,48 @@ function initGasBridge() {
                          google.script.run &&
                          typeof google.script.run.withSuccessHandler === 'function';
     
-    if (isGitHubPages || !hasNativeGAS) {
-        console.log('🌐 Mode démo permanent activé (GitHub Pages / CORS)');
+    // 🔥 FORCER le mode démo sur GitHub Pages
+    if (isGitHubPages) {
+        console.log('🌐 GitHub Pages détecté - Activation du mode démo');
+        activateDemoMode();
+        return;
+    }
+    
+    // Pour Capacitor (APK), on essaie la vraie connexion
+    const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
+    if (isCapacitor) {
+        console.log('📱 Mode Capacitor détecté');
+        if (hasNativeGAS) {
+            console.log('✅ google.script.run disponible en natif');
+            // Configuration normale
+            if (typeof google === 'undefined') {
+                window.google = { script: {} };
+            }
+            if (typeof google.script === 'undefined') {
+                google.script = {};
+            }
+            google.script.run = createGasProxy();
+            return;
+        }
+        console.log('⚠️ google.script.run non disponible, mode démo activé');
+        activateDemoMode();
+        return;
+    }
+    
+    // Autres cas
+    if (!hasNativeGAS) {
+        console.log('🌐 Mode démo activé (CORS)');
         activateDemoMode();
         return;
     }
     
     console.log('🌐 Initialisation du pont GAS natif...');
-    
     if (typeof google === 'undefined') {
         window.google = { script: {} };
     }
     if (typeof google.script === 'undefined') {
         google.script = {};
     }
-    
     google.script.run = createGasProxy();
     
     console.log('🔗 Pont GAS prêt - URL:', GAS_CONFIG.url);
