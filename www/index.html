@@ -2478,9 +2478,38 @@ function activateDemoMode() {
                 loadCaisse();
             }
         }, 1200);
-        
-        console.log('✅ Mode démo permanent activé avec succès !');
-    }, 500);
+
+        // Dans activateDemoMode(), juste avant le dernier console.log
+
+// 🔥 FORCER LE CHARGEMENT DES DONNÉES
+setTimeout(function() {
+    console.log('🔄 Chargement des données démo...');
+    
+    // Charger les membres
+    if (typeof loadMembres === 'function') {
+        loadMembres();
+    }
+    
+    setTimeout(function() {
+        if (typeof loadApports === 'function') {
+            loadApports();
+        }
+    }, 300);
+    
+    setTimeout(function() {
+        if (typeof loadFactures === 'function') {
+            loadFactures();
+        }
+    }, 600);
+    
+    setTimeout(function() {
+        if (typeof loadCaisse === 'function') {
+            loadCaisse();
+        }
+    }, 900);
+}, 200);
+
+console.log('✅ Mode démo permanent activé avec succès !');
 }
 
 // ============================================================
