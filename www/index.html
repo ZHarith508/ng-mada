@@ -2075,50 +2075,27 @@ var actualiteEnModificationId = null;
 var mobileMenuInitialized = false;
 
 // ============================================================
-//  CONFIGURATION GAS
+//  CONFIGURATION GAS - METTEZ VOTRE VRAIE URL ICI
 // ============================================================
 
 const GAS_CONFIG = {
+    // 🔥 METTEZ VOTRE URL DE WEB APP ICI
     url: 'https://script.google.com/macros/s/AKfycbzu3LlRkWRi6JrjBFpvHM_oJVWUUGnl7WvxhxcGOvZrX0-JLHkt9XxN5W-TayArg35a3w/exec'
 };
 
 // ============================================================
-//  DÉMARRAGE
-// ============================================================
-
-(function() {
-    console.log('🚀 NG-MADA - Démarrage');
-    if (window._ngmada_loaded) { console.warn('⚠️ App déjà chargée'); return; }
-    window._ngmada_loaded = true;
-    
-    window.addEventListener('load', function() {
-        var splash = document.getElementById('splashScreen');
-        if (splash) splash.style.display = 'none';
-    });
-    
-    setTimeout(function() {
-        var splash = document.getElementById('splashScreen');
-        if (splash) splash.style.display = 'none';
-    }, 3000);
-    
-    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-        console.log('📱 Mode Capacitor détecté');
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(regs) {
-                regs.forEach(function(reg) { reg.unregister(); });
-            });
-        }
-    }
-})();
-
-// ============================================================
-//  MODE DÉMO PERMANENT
+//  MODE DÉMO - UNIQUEMENT EN FALLBACK
 // ============================================================
 
 function activateDemoMode() {
-    console.log('🔧 Activation du mode démo...');
-    if (typeof google === 'undefined') { window.google = { script: {} }; }
-    if (typeof google.script === 'undefined') { google.script = {}; }
+    console.warn('⚠️ Mode démo activé - Utilisez des données factices');
+    
+    if (typeof google === 'undefined') {
+        window.google = { script: {} };
+    }
+    if (typeof google.script === 'undefined') {
+        google.script = {};
+    }
     
     const DEMO_DATA = {
         totalVerse: 1805000,
@@ -2155,36 +2132,111 @@ function activateDemoMode() {
     };
     
     const demoHandlers = {
-        getDashboardData: function(data, cb) { setTimeout(function() { cb({ totalVerse: DEMO_DATA.totalVerse, totalReste: DEMO_DATA.totalReste, associesValides: DEMO_DATA.associesValides, enAttente: DEMO_DATA.enAttente, joursRestants: DEMO_DATA.joursRestants, soldeCaisse: DEMO_DATA.soldeCaisse, nombreApports: DEMO_DATA.apports.length }); }, 200); },
-        getMembres: function(data, cb) { setTimeout(function() { cb(DEMO_DATA.membres); }, 200); },
-        getApportsData: function(data, cb) { setTimeout(function() { cb(DEMO_DATA.apports); }, 200); },
-        getFacturesData: function(data, cb) { setTimeout(function() { cb(DEMO_DATA.factures); }, 200); },
-        getFinanceData: function(data, cb) { setTimeout(function() { cb(DEMO_DATA.finance); }, 200); },
-        getApportsMensuels: function(data, cb) { setTimeout(function() { cb(DEMO_DATA.chartData); }, 200); },
-        getProfilUtilisateur: function(email, cb) { setTimeout(function() { cb({ success: true, nom: 'Admin NG-MADA', email: email || 'admin@ngmada.com', photo: '', dateCreation: '01/09/2026' }); }, 200); },
-        getListeUtilisateurs: function(data, cb) { setTimeout(function() { cb([{ nom: 'Admin NG-MADA', email: 'admin@ngmada.com', estEnLigne: true }, { nom: 'Utilisateur Test', email: 'test@ngmada.com', estEnLigne: false }]); }, 200); },
-        connecterUtilisateur: function(data, cb) { setTimeout(function() { if (data && data.email && data.motDePasse) { cb({ success: true, token: 'demo_token_' + Date.now(), nom: 'Utilisateur Démo', email: data.email }); } else { cb({ success: false, message: 'Email ou mot de passe incorrect' }); } }, 200); },
-        inscrireUtilisateur: function(data, cb) { setTimeout(function() { cb({ success: true }); }, 200); },
-        verifierPin: function(pin, cb) { setTimeout(function() { cb(pin === '1986' || pin === '0000'); }, 200); },
-        saveMembre: function(data, cb) { setTimeout(function() { cb({ success: true, id: 'M' + String(Math.floor(Math.random() * 9999)).padStart(4, '0') }); }, 200); },
-        validerFactureWeb: function(pin, row, numFacture, cb) { setTimeout(function() { cb({ success: true, numFacture: numFacture || 'NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200); },
-        supprimerMembreAvecCascade: function(pin, id, cb) { setTimeout(function() { cb({ success: true, message: 'Membre supprimé avec succès' }); }, 200); },
-        supprimerFactureAvecCascade: function(pin, row, cb) { setTimeout(function() { cb({ success: true, message: 'Facture supprimée avec succès' }); }, 200); },
-        ajouterMouvementFinance: function(pin, infos, cb) { setTimeout(function() { cb({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200); },
-        previsualiserMouvementFinance: function(pin, infos, cb) { setTimeout(function() { cb({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200); },
-        envoyerCarteMembreParEmail: function(pin, id, cb) { setTimeout(function() { cb({ success: true, email: 'membre@test.com' }); }, 200); },
-        envoyerJustificatifParEmail: function(pin, row, cb) { setTimeout(function() { cb({ success: true, email: 'admin@test.com' }); }, 200); },
-        genererNumeroFacture: function(cb) { setTimeout(function() { cb('NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0')); }, 200); },
-        testerConnexion: function(data, cb) { setTimeout(function() { cb({ success: true, message: '✅ Mode démo actif !' }); }, 200); },
-        deconnecterUtilisateur: function(token, cb) { setTimeout(function() { cb({ success: true }); }, 200); },
-        mettreAJourDateConnexion: function(email, cb) { setTimeout(function() { cb({ success: true }); }, 200); }
+        getDashboardData: function(data, cb) {
+            setTimeout(function() {
+                cb({
+                    totalVerse: DEMO_DATA.totalVerse,
+                    totalReste: DEMO_DATA.totalReste,
+                    associesValides: DEMO_DATA.associesValides,
+                    enAttente: DEMO_DATA.enAttente,
+                    joursRestants: DEMO_DATA.joursRestants,
+                    soldeCaisse: DEMO_DATA.soldeCaisse,
+                    nombreApports: DEMO_DATA.apports.length
+                });
+            }, 200);
+        },
+        getMembres: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.membres); }, 200);
+        },
+        getApportsData: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.apports); }, 200);
+        },
+        getFacturesData: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.factures); }, 200);
+        },
+        getFinanceData: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.finance); }, 200);
+        },
+        getApportsMensuels: function(data, cb) {
+            setTimeout(function() { cb(DEMO_DATA.chartData); }, 200);
+        },
+        getProfilUtilisateur: function(email, cb) {
+            setTimeout(function() {
+                cb({ success: true, nom: 'Admin NG-MADA', email: email || 'admin@ngmada.com', photo: '', dateCreation: '01/09/2026' });
+            }, 200);
+        },
+        getListeUtilisateurs: function(data, cb) {
+            setTimeout(function() {
+                cb([
+                    { nom: 'Admin NG-MADA', email: 'admin@ngmada.com', estEnLigne: true },
+                    { nom: 'Utilisateur Test', email: 'test@ngmada.com', estEnLigne: false }
+                ]);
+            }, 200);
+        },
+        connecterUtilisateur: function(data, cb) {
+            setTimeout(function() {
+                if (data && data.email && data.motDePasse) {
+                    cb({ success: true, token: 'demo_token_' + Date.now(), nom: 'Utilisateur Démo', email: data.email });
+                } else {
+                    cb({ success: false, message: 'Email ou mot de passe incorrect' });
+                }
+            }, 200);
+        },
+        inscrireUtilisateur: function(data, cb) {
+            setTimeout(function() { cb({ success: true }); }, 200);
+        },
+        verifierPin: function(pin, cb) {
+            setTimeout(function() { cb(pin === '1986' || pin === '0000'); }, 200);
+        },
+        saveMembre: function(data, cb) {
+            setTimeout(function() { cb({ success: true, id: 'M' + String(Math.floor(Math.random() * 9999)).padStart(4, '0') }); }, 200);
+        },
+        validerFactureWeb: function(pin, row, numFacture, cb) {
+            setTimeout(function() { cb({ success: true, numFacture: numFacture || 'NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200);
+        },
+        supprimerMembreAvecCascade: function(pin, id, cb) {
+            setTimeout(function() { cb({ success: true, message: 'Membre supprimé avec succès' }); }, 200);
+        },
+        supprimerFactureAvecCascade: function(pin, row, cb) {
+            setTimeout(function() { cb({ success: true, message: 'Facture supprimée avec succès' }); }, 200);
+        },
+        ajouterMouvementFinance: function(pin, infos, cb) {
+            setTimeout(function() { cb({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200);
+        },
+        previsualiserMouvementFinance: function(pin, infos, cb) {
+            setTimeout(function() { cb({ success: true, numFacture: 'GF-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0') }); }, 200);
+        },
+        envoyerCarteMembreParEmail: function(pin, id, cb) {
+            setTimeout(function() { cb({ success: true, email: 'membre@test.com' }); }, 200);
+        },
+        envoyerJustificatifParEmail: function(pin, row, cb) {
+            setTimeout(function() { cb({ success: true, email: 'admin@test.com' }); }, 200);
+        },
+        genererNumeroFacture: function(cb) {
+            setTimeout(function() { cb('NG-2026-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0')); }, 200);
+        },
+        testerConnexion: function(data, cb) {
+            setTimeout(function() { cb({ success: true, message: '✅ Mode démo actif !' }); }, 200);
+        },
+        deconnecterUtilisateur: function(token, cb) {
+            setTimeout(function() { cb({ success: true }); }, 200);
+        },
+        mettreAJourDateConnexion: function(email, cb) {
+            setTimeout(function() { cb({ success: true }); }, 200);
+        }
     };
     
     const runObj = {
         _success: null,
         _failure: null,
-        withSuccessHandler: function(callback) { this._success = callback; return this; },
-        withFailureHandler: function(callback) { this._failure = callback; return this; }
+        withSuccessHandler: function(callback) {
+            this._success = callback;
+            return this;
+        },
+        withFailureHandler: function(callback) {
+            this._failure = callback;
+            return this;
+        }
     };
     
     const handler = {
@@ -2211,42 +2263,34 @@ function activateDemoMode() {
     
     google.script.run = new Proxy(runObj, handler);
     console.log('✅ Proxy démo permanent activé !');
-    
-    setTimeout(function() {
-        console.log('🔄 Affichage des données démo...');
-        var loginGate = document.getElementById('loginGate');
-        if (loginGate) loginGate.style.display = 'none';
-        var appShell = document.getElementById('appShell');
-        if (appShell) appShell.style.display = 'block';
-        var splash = document.getElementById('splashScreen');
-        if (splash) splash.style.display = 'none';
-        var userNom = document.getElementById('utilisateurNom');
-        if (userNom) userNom.textContent = 'Admin';
-        var userNameDisplay = document.getElementById('userNameDisplay');
-        if (userNameDisplay) userNameDisplay.textContent = 'Admin';
-        
-        if (typeof loadDashboard === 'function' && !loadedTabs['dashboard']) {
-            loadedTabs['dashboard'] = true;
-            loadDashboard();
-        }
-        console.log('✅ Mode démo activé avec succès !');
-    }, 500);
 }
 
 // ============================================================
-//  PONT GAS
+//  PONT GAS - CORRIGÉ
 // ============================================================
 
 function initGasBridge() {
     const isGitHubPages = window.location.hostname.includes('github.io');
-    const hasNativeGAS = typeof google !== 'undefined' && google.script && google.script.run && typeof google.script.run.withSuccessHandler === 'function';
+    const hasNativeGAS = typeof google !== 'undefined' && 
+                         google.script && 
+                         google.script.run &&
+                         typeof google.script.run.withSuccessHandler === 'function';
     
+    // ✅ SUR GITHUB PAGES, UTILISER LE PROXY FETCH
     if (isGitHubPages) {
-        console.log('🌐 GitHub Pages détecté - Mode démo');
-        activateDemoMode();
+        console.log('🌐 GitHub Pages détecté - Utilisation du proxy fetch vers:', GAS_CONFIG.url);
+        if (typeof google === 'undefined') {
+            window.google = { script: {} };
+        }
+        if (typeof google.script === 'undefined') {
+            google.script = {};
+        }
+        google.script.run = createGasProxy();
+        console.log('✅ Proxy fetch créé avec succès');
         return;
     }
     
+    // Pour Capacitor (APK)
     const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
     if (isCapacitor) {
         console.log('📱 Mode Capacitor détecté');
@@ -2262,52 +2306,122 @@ function initGasBridge() {
         return;
     }
     
-    if (!hasNativeGAS) {
-        console.log('🌐 Mode démo activé (CORS)');
-        activateDemoMode();
+    // Cas natif (Google Apps Script)
+    if (hasNativeGAS) {
+        console.log('🌐 Initialisation du pont GAS natif...');
+        if (typeof google === 'undefined') window.google = { script: {} };
+        if (typeof google.script === 'undefined') google.script = {};
+        google.script.run = createGasProxy();
         return;
     }
     
-    console.log('🌐 Initialisation du pont GAS natif...');
-    if (typeof google === 'undefined') window.google = { script: {} };
-    if (typeof google.script === 'undefined') google.script = {};
-    google.script.run = createGasProxy();
+    // Fallback: mode démo
+    console.log('🌐 Mode démo activé (fallback)');
+    activateDemoMode();
 }
 
 function createGasProxy() {
     const context = { _success: null, _failure: null };
+    
     function executeMethod(method, data) {
         console.log('📤 Appel méthode:', method);
+        console.log('📦 Données envoyées:', data);
+        
         fetch(GAS_CONFIG.url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ method: method, data: data || {} })
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                method: method, 
+                data: data || {} 
+            })
         })
-        .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
-        .then(result => { if (context._success) context._success(result); })
-        .catch(err => { if (context._failure) context._failure(err); else console.error('❌ Erreur:', err); });
+        .then(res => {
+            if (!res.ok) throw new Error('HTTP ' + res.status + ' - ' + res.statusText);
+            return res.json();
+        })
+        .then(result => {
+            console.log('📥 Réponse reçue pour', method, result);
+            if (context._success) {
+                context._success(result);
+            } else {
+                console.warn('⚠️ Aucun success handler pour', method);
+            }
+        })
+        .catch(err => {
+            console.error('❌ Erreur fetch pour', method, err.message);
+            if (context._failure) {
+                context._failure(err);
+            } else {
+                console.error('❌ Erreur non gérée:', err);
+            }
+        });
     }
+    
     const proxy = {
-        withSuccessHandler: function(callback) { context._success = callback; return proxy; },
-        withFailureHandler: function(callback) { context._failure = callback; return proxy; }
+        withSuccessHandler: function(callback) {
+            context._success = callback;
+            return proxy;
+        },
+        withFailureHandler: function(callback) {
+            context._failure = callback;
+            return proxy;
+        }
     };
+    
     return new Proxy(proxy, {
         get(target, prop) {
-            if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') return target[prop];
-            if (typeof prop === 'string') return function(data) { executeMethod(prop, data); return target; };
+            if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
+                return target[prop];
+            }
+            if (typeof prop === 'string') {
+                return function(data) {
+                    executeMethod(prop, data);
+                    return target;
+                };
+            }
             return target[prop];
         }
     });
 }
 
 // ============================================================
-//  ⚠️ NAVIGATION PRINCIPALE - UNE SEULE FOIS ⚠️
+//  DÉMARRAGE
+// ============================================================
+
+(function() {
+    console.log('🚀 NG-MADA - Démarrage');
+    if (window._ngmada_loaded) { console.warn('⚠️ App déjà chargée'); return; }
+    window._ngmada_loaded = true;
+    
+    window.addEventListener('load', function() {
+        var splash = document.getElementById('splashScreen');
+        if (splash) splash.style.display = 'none';
+    });
+    
+    setTimeout(function() {
+        var splash = document.getElementById('splashScreen');
+        if (splash) splash.style.display = 'none';
+    }, 3000);
+    
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+        console.log('📱 Mode Capacitor détecté');
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+                regs.forEach(function(reg) { reg.unregister(); });
+            });
+        }
+    }
+})();
+
+// ============================================================
+//  NAVIGATION PRINCIPALE
 // ============================================================
 
 function initNavigation() {
     console.log('🔄 Initialisation de la navigation...');
     
-    // Nettoyer les anciens écouteurs
     document.querySelectorAll('.nav-item').forEach(function(btn) {
         var newBtn = btn.cloneNode(true);
         btn.parentNode.replaceChild(newBtn, btn);
@@ -2320,13 +2434,11 @@ function initNavigation() {
             var tab = this.dataset.tab;
             console.log('🔘 Onglet cliqué:', tab);
             
-            // Mettre à jour les classes actives
             document.querySelectorAll('.nav-item').forEach(function(b) {
                 b.classList.remove('active');
             });
             this.classList.add('active');
             
-            // Afficher la vue correspondante
             document.querySelectorAll('.view').forEach(function(v) {
                 v.classList.remove('active');
                 v.style.display = 'none';
@@ -2337,7 +2449,6 @@ function initNavigation() {
                 targetView.style.display = 'block';
             }
             
-            // ✅ Charger UNIQUEMENT si pas déjà chargé
             if (!loadedTabs[tab]) {
                 console.log('📥 Chargement des données pour:', tab);
                 loadedTabs[tab] = true;
@@ -2367,18 +2478,13 @@ function initNavigation() {
                 }
             }
             
-            // Mettre à jour les FAB
             setTimeout(function() { updateFabsVisibility(tab); }, 100);
         });
     });
 }
 
 // ============================================================
-//  ⚠️ FIN DE LA NAVIGATION - PAS DE DOUBLON ⚠️
-// ============================================================
-
-// ============================================================
-//  DASHBOARD
+//  DASHBOARD - CORRIGÉ AVEC GESTION D'ERREUR
 // ============================================================
 
 function loadDashboard() {
@@ -2388,27 +2494,46 @@ function loadDashboard() {
     if (loading) loading.style.display = 'block';
     if (content) content.style.display = 'none';
     
-    var callback = function(d) {
-        console.log('📊 Données dashboard reçues');
+    var callback = function(result) {
+        console.log('📊 Résultat reçu:', result);
         if (loading) loading.style.display = 'none';
         if (content) content.style.display = 'block';
-        afficherStatsDashboard(d || null);
+        
+        // Vérifier si le résultat contient une erreur
+        if (result && result.__error) {
+            console.error('❌ Erreur dashboard:', result.__error);
+            afficherStatsDashboard(null);
+            return;
+        }
+        
+        // Si le résultat est un tableau ou un objet
+        if (result && typeof result === 'object') {
+            afficherStatsDashboard(result);
+        } else {
+            afficherStatsDashboard(null);
+        }
     };
     
     var errorCallback = function(err) {
         console.error('❌ Erreur chargement dashboard:', err);
         if (loading) loading.style.display = 'none';
         if (content) content.style.display = 'block';
+        // En cas d'erreur, utiliser les données du mode démo
         afficherStatsDashboard(null);
     };
     
     if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-            .withSuccessHandler(callback)
-            .withFailureHandler(errorCallback)
-            .getDashboardData();
+        try {
+            google.script.run
+                .withSuccessHandler(callback)
+                .withFailureHandler(errorCallback)
+                .getDashboardData({});
+        } catch (e) {
+            console.error('❌ Exception google.script.run:', e);
+            errorCallback(e);
+        }
     } else {
-        console.log('📊 Mode démo - données simulées');
+        console.log('📊 google.script.run non disponible - mode démo');
         if (loading) loading.style.display = 'none';
         if (content) content.style.display = 'block';
         afficherStatsDashboard(null);
@@ -2416,13 +2541,28 @@ function loadDashboard() {
 }
 
 function afficherStatsDashboard(d) {
-    var data = d || { totalVerse: 1805000, totalReste: 4195000, associesValides: 5, enAttente: 3, joursRestants: 33, soldeCaisse: -9157000 };
+    console.log('📊 afficherStatsDashboard appelé avec:', d);
+    
+    // Données par défaut (mode démo)
+    var data = d || { 
+        totalVerse: 1805000, 
+        totalReste: 4195000, 
+        associesValides: 5, 
+        enAttente: 3, 
+        joursRestants: 33, 
+        soldeCaisse: -9157000 
+    };
+    
     var associesValides = data.associesValides || 0;
     var totalVerse = data.totalVerse || 0;
     
     function setText(id, value) { 
         var el = document.getElementById(id); 
-        if (el) el.textContent = value; 
+        if (el) {
+            el.textContent = value;
+        } else {
+            console.warn('⚠️ Élément non trouvé:', id);
+        }
     }
     
     setText('dTotalVerse', totalVerse.toLocaleString('fr-FR') + ' Ar');
@@ -2442,7 +2582,9 @@ function afficherStatsDashboard(d) {
     
     var moyenne = associesValides > 0 ? totalVerse / associesValides : 0;
     var resumeMoyenne = document.getElementById('resumeMoyenne');
-    if (resumeMoyenne) resumeMoyenne.textContent = 'Moyenne par membre : ' + moyenne.toLocaleString('fr-FR') + ' Ar';
+    if (resumeMoyenne) {
+        resumeMoyenne.textContent = 'Moyenne par membre : ' + moyenne.toLocaleString('fr-FR') + ' Ar';
+    }
     
     var capitalVise = 5000000;
     var pourcentage = Math.min(totalVerse / capitalVise, 1);
@@ -2458,36 +2600,65 @@ function afficherStatsDashboard(d) {
     var msgBox = document.getElementById('messageContainer');
     var msgTexte = document.getElementById('messageTexte');
     if (msgBox && msgTexte) {
-        if (pourcentage >= 0.75) { msgBox.style.display = 'block'; msgTexte.textContent = '🎉 Félicitations ! ' + Math.round(pourcentage * 100) + '% atteint !'; msgTexte.style.color = '#4ade80'; }
-        else if (pourcentage >= 0.50) { msgBox.style.display = 'block'; msgTexte.textContent = '💪 Bonne progression ! ' + Math.round(pourcentage * 100) + '% atteint.'; msgTexte.style.color = '#facc15'; }
-        else if (data.joursRestants < 10 && data.joursRestants > 0) { msgBox.style.display = 'block'; msgTexte.textContent = '⚠️ Plus que ' + data.joursRestants + ' jours !'; msgTexte.style.color = '#f87171'; }
-        else if (data.joursRestants === 0) { msgBox.style.display = 'block'; msgTexte.textContent = '⏰ Période terminée !'; msgTexte.style.color = '#f87171'; }
-        else { msgBox.style.display = 'none'; }
+        if (pourcentage >= 0.75) {
+            msgBox.style.display = 'block';
+            msgTexte.textContent = '🎉 Félicitations ! ' + Math.round(pourcentage * 100) + '% atteint !';
+            msgTexte.style.color = '#4ade80';
+        } else if (pourcentage >= 0.50) {
+            msgBox.style.display = 'block';
+            msgTexte.textContent = '💪 Bonne progression ! ' + Math.round(pourcentage * 100) + '% atteint.';
+            msgTexte.style.color = '#facc15';
+        } else if (data.joursRestants < 10 && data.joursRestants > 0) {
+            msgBox.style.display = 'block';
+            msgTexte.textContent = '⚠️ Plus que ' + data.joursRestants + ' jours !';
+            msgTexte.style.color = '#f87171';
+        } else if (data.joursRestants === 0) {
+            msgBox.style.display = 'block';
+            msgTexte.textContent = '⏰ Période terminée !';
+            msgTexte.style.color = '#f87171';
+        } else {
+            msgBox.style.display = 'none';
+        }
     }
     
+    // Charger les graphiques
     if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-            .withSuccessHandler(function(chartData) { afficherGraphiqueApports(chartData && !chartData.__error ? chartData : null); })
-            .withFailureHandler(function() { afficherGraphiqueApports(null); })
-            .getApportsMensuels();
-    } else { afficherGraphiqueApports(null); }
+        try {
+            google.script.run
+                .withSuccessHandler(function(chartData) {
+                    afficherGraphiqueApports(chartData && !chartData.__error ? chartData : null);
+                })
+                .withFailureHandler(function() { afficherGraphiqueApports(null); })
+                .getApportsMensuels({});
+        } catch(e) {
+            afficherGraphiqueApports(null);
+        }
+    } else {
+        afficherGraphiqueApports(null);
+    }
     
     setTimeout(function() { afficherCamembert(totalVerse); }, 300);
 }
 
 function loadDashboardSilent() {
     if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-            .withSuccessHandler(function(d) { afficherStatsDashboard(d); })
-            .withFailureHandler(function(err) { console.error('❌ Erreur rafraîchissement dashboard:', err); })
-            .getDashboardData();
+        try {
+            google.script.run
+                .withSuccessHandler(function(d) { afficherStatsDashboard(d); })
+                .withFailureHandler(function(err) { console.error('❌ Erreur rafraîchissement dashboard:', err); })
+                .getDashboardData({});
+        } catch(e) {
+            console.error('❌ Erreur loadDashboardSilent:', e);
+        }
     }
 }
 
 function afficherGraphiqueApports(data) {
     var canvas = document.getElementById('graphiqueApports');
     if (!canvas) return;
-    if (window._chartInstance) { try { window._chartInstance.destroy(); } catch(e) {} }
+    if (window._chartInstance) {
+        try { window._chartInstance.destroy(); } catch(e) {}
+    }
     var labels = data && data.labels ? data.labels : ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû'];
     var values = data && data.data ? data.data : [500000, 750000, 300000, 400000, 600000, 800000, 450000, 650000];
     try {
@@ -2526,7 +2697,9 @@ function afficherGraphiqueApports(data) {
 function afficherCamembert(total) {
     var canvas = document.getElementById('graphiqueCamembert');
     if (!canvas) return;
-    if (window._camembertInstance) { try { window._camembertInstance.destroy(); } catch(e) {} }
+    if (window._camembertInstance) {
+        try { window._camembertInstance.destroy(); } catch(e) {}
+    }
     var totalSafe = total || 1805000;
     var cotisations = Math.round(totalSafe * 0.60);
     var dons = Math.round(totalSafe * 0.25);
@@ -2626,27 +2799,31 @@ function afficherMembres(list) {
 function loadCaisse() {
     console.log('💳 loadCaisse appelé');
     if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-            .withSuccessHandler(function(res) {
-                if (res && res.__error) { afficherErreurCaisse(res.__error); return; }
-                dernierMouvementsListe = (res && res.items) || [];
-                var loading = document.getElementById('caisseLoading');
-                var content = document.getElementById('caisseContent');
-                if (loading) loading.style.display = 'none';
-                if (content) {
-                    content.style.display = 'block';
-                    if (!dernierMouvementsListe.length) {
-                        content.innerHTML = '<div class="empty">Aucun mouvement pour le moment.</div>';
-                        return;
+        try {
+            google.script.run
+                .withSuccessHandler(function(res) {
+                    if (res && res.__error) { afficherErreurCaisse(res.__error); return; }
+                    dernierMouvementsListe = (res && res.items) || [];
+                    var loading = document.getElementById('caisseLoading');
+                    var content = document.getElementById('caisseContent');
+                    if (loading) loading.style.display = 'none';
+                    if (content) {
+                        content.style.display = 'block';
+                        if (!dernierMouvementsListe.length) {
+                            content.innerHTML = '<div class="empty">Aucun mouvement pour le moment.</div>';
+                            return;
+                        }
+                        majBandeauGlobal(res.totalEntree || 0, res.totalSortie || 0);
+                        document.getElementById('rechercheCaisse').value = '';
+                        document.getElementById('soldeBannerFiltre').style.display = 'none';
+                        afficherMouvements(dernierMouvementsListe);
                     }
-                    majBandeauGlobal(res.totalEntree || 0, res.totalSortie || 0);
-                    document.getElementById('rechercheCaisse').value = '';
-                    document.getElementById('soldeBannerFiltre').style.display = 'none';
-                    afficherMouvements(dernierMouvementsListe);
-                }
-            })
-            .withFailureHandler(function(err) { afficherErreurCaisse(err.message); })
-            .getFinanceData();
+                })
+                .withFailureHandler(function(err) { afficherErreurCaisse(err.message); })
+                .getFinanceData({});
+        } catch(e) {
+            afficherErreurCaisse(e.message);
+        }
     } else {
         dernierMouvementsListe = [{ row: 1, type: 'Entrée', categorie: 'Apport associé', description: 'Exemple', date: '05/01/2025', entree: 10000, sortie: 0, numFacture: 'GF-2026-00001' }];
         var loading = document.getElementById('caisseLoading');
@@ -2836,11 +3013,20 @@ function normaliserRecherche(str) {
 
 function runOrDemo(fnName, callback, demoData) {
     if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run.withSuccessHandler(callback).withFailureHandler(function(err) {
-            console.error(fnName, err);
+        try {
+            google.script.run
+                .withSuccessHandler(callback)
+                .withFailureHandler(function(err) {
+                    console.error('❌ Erreur ' + fnName + ':', err);
+                    callback(demoData);
+                })[fnName]({});
+        } catch(e) {
+            console.error('❌ Exception ' + fnName + ':', e);
             callback(demoData);
-        })[fnName]();
-    } else { callback(demoData); }
+        }
+    } else {
+        callback(demoData);
+    }
 }
 
 function reinitialiserCompteurFacture() {
