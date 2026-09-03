@@ -4,7 +4,6 @@
   "description": "Gestion des apports, caisse et membres de votre association",
   "start_url": "./index.html",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone"],
   "background_color": "#0f172a",
   "theme_color": "#facc15",
   "orientation": "portrait",
@@ -32,13 +31,7 @@
       "name": "Dashboard",
       "short_name": "Dashboard",
       "description": "Voir le tableau de bord",
-      "url": "./index.html",
-      "icons": [
-        {
-          "src": "https://drive.google.com/thumbnail?id=1oLTjgg8v_wpNw_1izzaVxPK9SM3XpmG-&sz=w192",
-          "sizes": "192x192"
-        }
-      ]
+      "url": "./index.html"
     },
     {
       "name": "Membres",
