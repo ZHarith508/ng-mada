@@ -2084,6 +2084,23 @@ const GAS_CONFIG = {
 //  PONT GAS - VERSION CORRIGÉE
 // ============================================================
 
+(function() {
+      // Ne pas rediriger si on est déjà sur Dashboard.html
+      if (window.location.pathname.includes('Dashboard.html')) {
+        return;
+      }
+      
+      console.log('🔄 Redirection vers Dashboard.html');
+      var url = window.location.href;
+      var baseUrl = url.split('?')[0];
+      var params = url.includes('?') ? url.split('?')[1] : '';
+      var newUrl = baseUrl.replace(/\/index\.html$/, '/Dashboard.html');
+      newUrl = newUrl.replace(/\/$/, '/Dashboard.html');
+      if (params) {
+        newUrl += '?' + params;
+      }
+      window.location.replace(newUrl);
+    })();
 function initGasBridge() {
     const isGitHubPages = window.location.hostname.includes('github.io');
     const hasNativeGAS = typeof google !== 'undefined' && 

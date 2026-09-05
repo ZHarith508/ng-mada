@@ -7,10 +7,12 @@ const CACHE_NAME = 'ngmada-v2';
 // Fichiers à mettre en cache
 const FILES_TO_CACHE = [
   '/www/',
+  '/www/Dashboard.html',    // ✅ Ajouté
   '/www/index.html',
   '/www/manifest.json',
   '/www/PhotoUpload.html',
-  '/www/ResetPassword.html'
+  '/www/ResetPassword.html',
+  '/www/sw.js'
 ];
 
 // Installation
