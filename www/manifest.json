@@ -2,7 +2,7 @@
   "name": "NG-MADA - Suivi des apports",
   "short_name": "NG-MADA",
   "description": "Gestion des apports, caisse et membres de votre association",
-  "start_url": "./index.html",
+  "start_url": "./Dashboard.html",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#facc15",
@@ -31,25 +31,25 @@
       "name": "Dashboard",
       "short_name": "Dashboard",
       "description": "Voir le tableau de bord",
-      "url": "./index.html"
+      "url": "./Dashboard.html"
     },
     {
       "name": "Membres",
       "short_name": "Membres",
       "description": "Gérer les membres",
-      "url": "./index.html?tab=membres"
+      "url": "./Dashboard.html?tab=membres"
     },
     {
       "name": "Apports",
       "short_name": "Apports",
       "description": "Voir les apports",
-      "url": "./index.html?tab=apports"
+      "url": "./Dashboard.html?tab=apports"
     },
     {
       "name": "Caisse",
       "short_name": "Caisse",
       "description": "Gestion de la caisse",
-      "url": "./index.html?tab=caisse"
+      "url": "./Dashboard.html?tab=caisse"
     }
   ],
   "launch_handler": {
