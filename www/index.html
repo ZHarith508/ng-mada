@@ -2085,21 +2085,11 @@ const GAS_CONFIG = {
 // ============================================================
 
 (function() {
-      // Ne pas rediriger si on est déjà sur Dashboard.html
-      if (window.location.pathname.includes('Dashboard.html')) {
-        return;
-      }
+      // Rediriger directement vers l'Apps Script
+      var gasUrl = 'https://script.google.com/macros/s/AKfycbzu3LlRkWRi6JrjBFpvHM_oJVWUUGnl7WvxhxcGOvZrX0-JLHkt9XxN5W-TayArg35a3w/exec';
       
-      console.log('🔄 Redirection vers Dashboard.html');
-      var url = window.location.href;
-      var baseUrl = url.split('?')[0];
-      var params = url.includes('?') ? url.split('?')[1] : '';
-      var newUrl = baseUrl.replace(/\/index\.html$/, '/Dashboard.html');
-      newUrl = newUrl.replace(/\/$/, '/Dashboard.html');
-      if (params) {
-        newUrl += '?' + params;
-      }
-      window.location.replace(newUrl);
+      console.log('🔄 Redirection vers Apps Script');
+      window.location.replace(gasUrl);
     })();
 function initGasBridge() {
     const isGitHubPages = window.location.hostname.includes('github.io');
