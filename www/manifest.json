@@ -7,7 +7,7 @@
   "background_color": "#0f172a",
   "theme_color": "#facc15",
   "orientation": "portrait",
-  "id": "ng-mada-app",
+  "id": "com.ngmada.app",
   "scope": "./",
   "lang": "fr",
   "dir": "ltr",
